@@ -1,7 +1,8 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom"
-import Layout from "./components/Layout"
-import Home from "./pages/Home"
-import Math from "./pages/Math"
+import React from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Layout from "./components/Layout";
+import Home from "./pages/Home";   // no “.jsx” needed
+import Math from "./pages/Math";
 
 export default function App() {
   return (
@@ -10,9 +11,9 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/math" element={<Math />} />
-          {/* …other pages */}
+          {/* add other routes here */}
         </Routes>
       </Layout>
     </BrowserRouter>
-  )
+  );
 }
