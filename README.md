@@ -1,59 +1,50 @@
-Edu-Bot
+# Edu-Bot
 
-Senior Design Project: Early Education AI Tutor
+**Senior Design Project: Early Education AI Tutor**
 
 Edu-Bot is a full‑stack web application integrating Text‑to‑Speech (TTS) and Speech‑to‑Text (STT) for early‑education lessons. Designed to run on a Raspberry Pi with a speaker and microphone, it comprises:
 
-Backend: Django + Django REST Framework
+* **Backend**: Django + Django REST Framework
+* **Frontend**: React + Vite
 
-Frontend: React + Vite
+---
 
-Table of Contents
+## Table of Contents
 
-Prerequisites
+* [Prerequisites](#prerequisites)
+* [Repository Structure](#repository-structure)
+* [Getting Started](#getting-started)
 
-Repository Structure
+  * [1. Clone the Repo](#1-clone-the-repo)
+  * [2. Backend Setup](#2-backend-setup)
+  * [3. Frontend Setup](#3-frontend-setup)
+  * [4. Running the Application](#4-running-the-application)
+* [Contributing](#contributing)
+* [Environment Variables](#environment-variables)
+* [License](#license)
 
-Getting Started
+---
 
-1. Clone the Repo
-
-2. Backend Setup
-
-3. Frontend Setup
-
-4. Running the Application
-
-Contributing
-
-Environment Variables
-
-License
-
-Prerequisites
+## Prerequisites
 
 Make sure you have the following installed on your development machine:
 
-Git (v2.x)
+* **Git** (v2.x)
+* **Node.js & npm** (LTS v16+)
+* **Python** (v3.10+)
+* **VS Code** (recommended) with extensions:
 
-Node.js & npm (LTS v16+)
+  * ESLint
+  * Prettier
+  * Python
+  * Tailwind CSS IntelliSense
+  * GitLens
 
-Python (v3.10+)
+---
 
-VS Code (recommended) with extensions:
+## Repository Structure
 
-ESLint
-
-Prettier
-
-Python
-
-Tailwind CSS IntelliSense
-
-GitLens
-
-Repository Structure
-
+```
 edu-bot/            # Monorepo root
 ├── backend/        # Django REST API
 │   ├── core/       # Settings & URLs
@@ -66,102 +57,135 @@ edu-bot/            # Monorepo root
 │   └── package.json
 ├── .gitignore
 └── README.md       # You are here
+```
 
-Getting Started
+---
+
+## Getting Started
 
 Follow these steps to get the project up and running locally.
 
-1. Clone the Repo
+### 1. Clone the Repo
 
+```bash
 git clone https://github.com/NickCebula/edu-bot.git
 cd edu-bot
+```
 
-2. Backend Setup
+### 2. Backend Setup
 
-Create & activate a virtual environment
+1. **Create & activate** a virtual environment
 
-cd backend
-python -m venv venv
-# macOS/Linux
-source venv/bin/activate
-# Windows (PowerShell)
-venv\Scripts\Activate.ps1
+   ```bash
+   cd backend
+   python -m venv venv
+   # macOS/Linux
+   source venv/bin/activate
+   # Windows (PowerShell)
+   venv\Scripts\Activate.ps1
+   ```
+2. **Install dependencies**
 
-Install dependencies
+   ```bash
+   pip install -r requirements.txt
+   ```
+3. **Configure environment**
 
-pip install -r requirements.txt
+   ```bash
+   cp .env.example .env
+   # Edit .env with your SECRET_KEY, DEBUG, ALLOWED_HOSTS, etc.
+   ```
+4. **Apply migrations & run server**
 
-Configure environment
+   ```bash
+   python manage.py migrate
+   python manage.py runserver
+   ```
 
-cp .env.example .env
-# Edit .env with your SECRET_KEY, DEBUG, ALLOWED_HOSTS, etc.
+The API will be available at: `http://localhost:8000/api/`
 
-Apply migrations & run server
+### 3. Frontend Setup
 
-python manage.py migrate
-python manage.py runserver
+1. **Navigate & install**
 
-The API will be available at: http://localhost:8000/api/
+   ```bash
+   cd ../frontend
+   npm install
+   ```
+2. **(If needed) Configure environment**
 
-3. Frontend Setup
+   ```bash
+   cp .env.example .env
+   ```
+3. **Start the dev server**
 
-Navigate & install
+   ```bash
+   npm run dev
+   ```
 
-cd ../frontend
-npm install
+Open the React app at: `http://localhost:5173`
 
-(If needed) Configure environment
+### 4. Running the Application
 
-cp .env.example .env
+1. Ensure your **Django** backend is running on port **8000**.
+2. Ensure your **Vite** frontend is running on port **5173**.
+3. Navigate to `http://localhost:5173` to interact with Edu‑Bot.
 
-Start the dev server
+---
 
-npm run dev
+## Environment Variables
 
-Open the React app at: http://localhost:5173
+Both `backend/` and `frontend/` include an `.env.example`. Copy these to `.env` and fill in:
 
-4. Running the Application
+* **backend/.env**:
 
-Ensure your Django backend is running on port 8000.
+  ```ini
+  SECRET_KEY=your_django_secret_key
+  DEBUG=True
+  ALLOWED_HOSTS=localhost,127.0.0.1
+  ```
 
-Ensure your Vite frontend is running on port 5173.
+* **frontend/.env** (if used):
 
-Navigate to http://localhost:5173 to interact with Edu‑Bot.
+  ```ini
+  # e.g. VITE_API_BASE_URL=/api
+  ```
 
-Environment Variables
+---
 
-Both backend/ and frontend/ include an .env.example. Copy these to .env and fill in:
+## Contributing
 
-backend/.env:
+We use a **feature-branch** workflow:
 
-SECRET_KEY=your_django_secret_key
-DEBUG=True
-ALLOWED_HOSTS=localhost,127.0.0.1
+1. Create a new branch:
 
-frontend/.env (if used):
-
-# e.g. VITE_API_BASE_URL=/api
-
-Contributing
-
-We use a feature-branch workflow:
-
-Create a new branch:
-
-
+   ```bash
+   ```
 
 git checkout -b feature/my-new-feature
 
+````
 2. Commit your changes:
    ```bash
 git add . && git commit -m "feat: add awesome feature"
+````
 
-Push & open a Pull Request:
+3. Push & open a Pull Request:
 
-
+   ```bash
+   ```
 
 git push origin feature/my-new-feature
 
+```
 4. Request a review, then merge into `main` once approved.
 
 Please ensure you pull the latest `main` before starting new work.
+
+---
+
+## License
+
+This project is released under the MIT License. See [LICENSE](LICENSE) for details.
+
+```
