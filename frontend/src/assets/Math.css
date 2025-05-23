@@ -1,0 +1,69 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  text-align: center;
+  margin: 0;
+}
+
+.top-bar {
+  background-color: red;
+  color: white;
+  padding: 15px;
+  font-size: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.top-bar .logo {
+  font-size: 24px;
+  font-weight: bold;
+}
+.top-bar .logout {
+  background-color: white;
+  color: red;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.top-bar .logout:hover {
+  background-color: #f4f4f4;
+}
+.top-bar .logout:focus {
+  outline: none;
+}
+.top-bar .logout:active {
+  background-color: #e0e0e0;
+}
+.top-bar .logout:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+.container {
+  max-width: 600px;
+  margin: 50px auto;
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+}
+.subjects {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+}
+.subject-btn {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 150px;
+  height: 100px;
+  color: white;
+  font-size: 18px;
+  border-radius: 10px;
+  text-decoration: none;
+}
+.math    { background: red; }
+.reading { background: lightgreen; }
+.spelling{ background: blue; }
+

@@ -1,15 +1,3 @@
-/* src/index.css */
-body {
-  margin: 0;
-  background-color: #f4f4f4;   /* ← your desired color */
-  font-family: Arial, sans-serif;
-}
-
-/* If you need to target the React root container instead: */
-#root {
-  min-height: 100vh;
-  background-color: #f4f4f4;
-}
 .container {
   max-width: 600px;
   margin: 50px auto;
@@ -36,13 +24,5 @@ body {
 .math    { background: red; }
 .reading { background: lightgreen; }
 .spelling{ background: blue; }
+/* You forgot this: */
 .test    { background: gray; }
-.top-bar {
-  background-color: red;
-  color: white;
-  padding: 15px;
-  font-size: 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
