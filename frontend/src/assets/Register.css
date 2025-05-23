@@ -1,0 +1,90 @@
+/* Register.css - Fun, child-friendly registration page styles */
+
+body {
+    background: linear-gradient(135deg, #fceabb 0%, #f8b500 100%);
+    font-family: 'Comic Sans MS', 'Comic Sans', cursive, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.register-container {
+    background: #fffbe7;
+    max-width: 400px;
+    margin: 40px auto;
+    border-radius: 24px;
+    box-shadow: 0 8px 24px rgba(248, 181, 0, 0.15);
+    padding: 32px 24px;
+    text-align: center;
+}
+
+.register-title {
+    font-size: 2.2rem;
+    color: #f8b500;
+    margin-bottom: 16px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.register-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.register-form label {
+    font-size: 1.1rem;
+    color: #ff9800;
+    margin-bottom: 4px;
+    text-align: left;
+}
+
+.register-form input[type="text"],
+.register-form input[type="email"],
+.register-form input[type="password"] {
+    padding: 10px 14px;
+    border: 2px solid #ffe082;
+    border-radius: 12px;
+    font-size: 1rem;
+    background: #fffde7;
+    transition: border 0.2s;
+}
+
+.register-form input:focus {
+    border-color: #f8b500;
+    outline: none;
+}
+
+.register-form button {
+    background: linear-gradient(90deg, #f8b500 60%, #ff9800 100%);
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 0;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(248, 181, 0, 0.12);
+    transition: background 0.2s, transform 0.2s;
+}
+
+.register-form button:hover {
+    background: linear-gradient(90deg, #ff9800 60%, #f8b500 100%);
+    transform: translateY(-2px) scale(1.03);
+}
+
+.register-form .error-message {
+    color: #e53935;
+    font-size: 0.95rem;
+    margin-top: -10px;
+    margin-bottom: 8px;
+}
+
+@media (max-width: 500px) {
+    .register-container {
+        padding: 20px 8px;
+        max-width: 95vw;
+    }
+    .register-title {
+        font-size: 1.5rem;
+    }
+}
