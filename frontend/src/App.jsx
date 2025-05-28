@@ -5,6 +5,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import Subjects from "./pages/Subjects";
 import Math from "./pages/Math";
 import Profile from "./pages/Profile";
+import Evaluations from "./pages/Evaluations";
 
 export default function App() {
   return (
