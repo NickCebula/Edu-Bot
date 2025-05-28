@@ -4,6 +4,7 @@ import Register from "./pages/Register";
 import ForgotPassword from "./pages/ForgotPassword";
 import Subjects from "./pages/Subjects";
 import Math from "./pages/Math";
+import Profile from "./pages/Profile";
 import Evaluations from "./pages/Evaluations";
 
 export default function App() {
@@ -15,8 +16,8 @@ export default function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/subjects"        element={<Subjects />} />
         <Route path="/math"            element={<Math />} />
-        <Route path="/evaluations"     element={<Evaluations />} />
-        <Route path="*"                 element={<Login />} />
+        <Route path="/profile"         element={<Profile />} />
+        <Route path="*"                element={<Login />} />
       </Routes>
     </BrowserRouter>
   );
