@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../assets/Profile.css"; // Import styles
+import NavBar from "../components/NavBar";
 
 export default function Profile() {
   const navigate = useNavigate();
@@ -18,16 +18,12 @@ export default function Profile() {
   }, []);
 
   return (
-    <div className="profile-root">
-      <div className="top-bar">
-        <div onClick={() => navigate("/subjects")} className="top-bar-title">Edu-Bot</div>
-        <div className="nav-links">
-          <a href="/subjects">SUBJECTS</a>
-          <a href="/evaluations">EVALUATIONS</a>
-          <a href="/profile">PROFILE</a>
-        </div>
-        <div>👤 {username}</div>
-      </div>
+    <>
+      <NavBar
+        title="Edu-Bot Math"
+        username={username}
+        links={[{ to: "/subjects", label: "BACK" }]}
+      />
 
       <div className="profile-container">
         <h2>PROFILE</h2>
@@ -43,6 +39,6 @@ export default function Profile() {
           <div className="subject-time spelling">SPELLING<br />Total time:</div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

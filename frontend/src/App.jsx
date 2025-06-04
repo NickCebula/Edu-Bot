@@ -6,6 +6,8 @@ import Subjects from "./pages/Subjects";
 import Math from "./pages/Math";
 import Profile from "./pages/Profile";
 import Evaluations from "./pages/Evaluations";
+import Reading from "./pages/Reading";
+import Spelling from "./pages/Spelling";
 
 export default function App() {
   return (
@@ -17,6 +19,9 @@ export default function App() {
         <Route path="/subjects"        element={<Subjects />} />
         <Route path="/math"            element={<Math />} />
         <Route path="/profile"         element={<Profile />} />
+        <Route path="/evaluations"     element={<Evaluations />} />
+        <Route path="/reading"         element={<Reading />} />
+        <Route path="/spelling"        element={<Spelling />} />
         <Route path="*"                element={<Login />} />
       </Routes>
     </BrowserRouter>
