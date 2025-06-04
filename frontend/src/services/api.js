@@ -5,16 +5,15 @@ export const api = axios.create({
   timeout: 5000,
 });
 
-// // api.js or inside your component
-// export async function fetchGeneratedQuestion(subject, level) {
-//   const response = await fetch('/api/generate-question/', {
-//     method: 'POST',
-//     headers: {
-//       'Content-Type': 'application/json'
-//     },
-//     body: JSON.stringify({ subject, level })
-//   });
+export async function fetchGeneratedQuestion(subject, level) {
+  const response = await fetch('/api/generate_reading_question/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ subject, level })
+  });
 
-//   const data = await response.json();
-//   return data.question;
-// }
+  const data = await response.json();
+  return data.question;
+}
