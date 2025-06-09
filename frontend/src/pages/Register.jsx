@@ -23,8 +23,8 @@ export default function Register() {
       .then(r => r.json())
       .then(data => {
         if (data.success) {
-          setMessage("Registered! Redirecting…");
-          setTimeout(() => navigate("/login"), 1000);
+          setMessage("Registered! Let's learn more about you...");
+          setTimeout(() => navigate("/student-info"), 1000);
         } else setMessage(data.message);
       });
   }

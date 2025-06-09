@@ -8,6 +8,7 @@ import Profile from "./pages/Profile";
 import Evaluations from "./pages/Evaluations";
 import Reading from "./pages/Reading";
 import Spelling from "./pages/Spelling";
+import StudentInfo from "./pages/StudentInfo";
 
 export default function App() {
   return (
@@ -15,6 +16,7 @@ export default function App() {
       <Routes>
         <Route path="/login"           element={<Login />} />
         <Route path="/register"        element={<Register />} />
+        <Route path="/student-info"    element={<StudentInfo />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/subjects"        element={<Subjects />} />
         <Route path="/math"            element={<Math />} />
