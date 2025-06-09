@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import ReadingPassage, Question
+from django.contrib.auth.models import User
+from .models import ReadingPassage, Question, StudentProfile
 
 class QuestionSerializer(serializers.ModelSerializer):
     passage = serializers.SerializerMethodField()
@@ -18,3 +19,9 @@ class ReadingPassageSerializer(serializers.ModelSerializer):
     class Meta:
         model = ReadingPassage
         fields = '__all__'
+
+
+class StudentProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StudentProfile
+        fields = ['grade', 'favorite_subject', 'notes']
