@@ -6,7 +6,7 @@ export const api = axios.create({
 });
 
 export async function fetchGeneratedQuestion(subject, level) {
-  const response = await fetch('/api/generate_reading_question/', {
+  const response = await fetch('/api/generate-reading/', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
