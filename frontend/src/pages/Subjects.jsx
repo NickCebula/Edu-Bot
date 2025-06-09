@@ -13,6 +13,8 @@ export default function Subjects({ username = "Guest" }) {
           { to: "/subjects", label: "SUBJECTS" },
           { to: "/evaluations", label: "EVALUATIONS" },
           { to: "/profile", label: "PROFILE" },
+          { to: "/logout", label: "LOGOUT" },
+          { to: "/dashboard", label: "Dashboard" }
         ]}
       />
       <div className="container">

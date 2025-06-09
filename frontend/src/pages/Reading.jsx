@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { authFetch } from '../utils/authFetch';
 
 function Reading() {
   const [questions, setQuestions] = useState([]);
@@ -12,7 +13,7 @@ function Reading() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('http://localhost:8000/api/reading/quiz/')
+    authFetch('http://localhost:8000/api/reading/quiz/')
       .then((res) => res.json())
       .then((data) => setQuestions(data))
       .catch((err) => console.error('Failed to load questions:', err));
@@ -71,7 +72,11 @@ function Reading() {
       {/* Passage */}
       <div style={{ backgroundColor: '#f9f9f9', padding: '15px', borderRadius: '8px', marginBottom: '20px' }}>
         <strong>Passage:</strong>
-        <p>{q.passage.passage_text || 'No passage provided.'}</p>
+        <p style={{ fontSize: "1.25rem", lineHeight: 1.7 }}>
+          {q && q.passage && q.passage.passage_text
+            ? q.passage.passage_text
+            : 'No passage provided.'}
+        </p>
       </div>
 
       {/* Question */}
@@ -83,39 +88,52 @@ function Reading() {
   <>
     <p><strong>Question {currentIndex + 1} of {questions.length}:</strong> {q.prompt}</p>
 
-    <div style={{ display: 'inline-grid', flexDirection: 'column', gap: '10px', marginTop: '15px' }}>
+    {/* Options */}
+    <ul style={{ listStyle: 'none', padding: 0, marginTop: 15 }}>
       {['A', 'B', 'C', 'D'].map((opt) => (
-        <label
-          key={opt}
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            backgroundColor: selected === opt ? '#d1e7dd' : '#f8f9fa',
-            gap: '8px',
-            cursor: 'pointer',
-            maxWidth: 'fit-content',
-            minWidth: '300px'
-          }}
-        >
-          <input
-            type="radio"
-            name="answer"
-            value={opt}
-            disabled={!!selected}
-            checked={selected === opt}
-            onChange={() => handleSelect(opt)}
-            style={{ margin: 0 }}
-          />
-          <span>{q[`option_${opt.toLowerCase()}`]}</span>
-        </label>
+        <li key={opt} style={{
+          marginBottom: 12,
+          background: selected === opt
+            ? (selected === q.correct_answer ? '#d4edda' : '#f8d7da')
+            : '#fff',
+          borderRadius: 6,
+          padding: 8,
+          border: '1px solid #ddd',
+          transition: 'background 0.2s'
+        }}>
+          <label style={{ cursor: selected ? 'default' : 'pointer', fontSize: '1.1rem', width: '100%', display: 'block' }}>
+            <input
+              type="radio"
+              name="answer"
+              value={opt}
+              disabled={!!selected}
+              checked={selected === opt}
+              onChange={() => handleSelect(opt)}
+              style={{ marginRight: 8 }}
+            />
+            <strong>{opt}:</strong> {q[`option_${opt.toLowerCase()}`]}
+          </label>
+        </li>
       ))}
-    </div>
-
-    {feedback && <p style={{ marginTop: '15px', fontWeight: 'bold' }}>{feedback}</p>}
+    </ul>
+    {feedback && (
+      <p style={{
+        fontWeight: 'bold',
+        fontSize: '1.1rem',
+        color: feedback.includes('Correct') ? '#155724' : '#721c24',
+        background: feedback.includes('Correct') ? '#d4edda' : '#f8d7da',
+        borderRadius: 6,
+        padding: 10,
+        marginTop: 16,
+        border: '1px solid #ccc'
+      }}>
+        {feedback}
+      </p>
+    )}
   </>
 )}
 
-      {/* Options */}
+      {/* Next Button */}
       {selected && (
         <button onClick={handleNext} style={{ marginTop: '20px' }}>
           {currentIndex === questions.length - 1 ? 'Finish Quiz' : 'Next Question'}
