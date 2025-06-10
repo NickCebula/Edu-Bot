@@ -151,7 +151,7 @@ def get_or_generate_questions(request):
 
     # 1) Check for profile
     try:
-        profile = user.student_profile
+        profile = user.profile
     except StudentProfile.DoesNotExist:
         return Response(
             {"detail": "Student profile not found. Complete your assessment form."},
@@ -215,8 +215,8 @@ def get_or_generate_questions(request):
     return Response(GeneratedQuestionSetSerializer(new_qs).data)
 
 #@csrf_exempt
-@permission_classes([AllowAny])
 @api_view(["POST"])
+@permission_classes([AllowAny])
 def register(request):
     data = request.data
     username = data.get("username")
@@ -227,8 +227,14 @@ def register(request):
     if User.objects.filter(username=username).exists():
         return Response({"success": False, "message": "Username taken"})
     user = User.objects.create_user(username=username, email=email, password=password)
-    return Response({"success": True, "message": "Registered", "user_id": user.id})
-
+    refresh = RefreshToken.for_user(user)
+    return Response({
+        "success": True,
+        "message": "Registered",
+        "access": str(refresh.access_token),
+        "refresh": str(refresh),
+        "user_id": user.id,
+    })
 
 @api_view(["POST"])
 def student_info(request):

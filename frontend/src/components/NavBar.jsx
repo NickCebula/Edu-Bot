@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { AuthContext } from "../contexts/AuthContext";
+import { AuthContext } from "../contexts/AuthContext.js";
 import "../assets/NavBar.css"; // Optional: you can keep or remove this if you rely solely on inline styles
 
 export default function NavBar({ title = "Edu-Bot", links = [] }) {
