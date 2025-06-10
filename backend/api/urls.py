@@ -1,5 +1,8 @@
 from django.urls import path
-from .views import next_question, reading_passage, generate_reading_question, get_reading, latest_reading, reading_quiz
+from .views import (
+    next_question, reading_passage, generate_reading_question, get_reading,
+    latest_reading, reading_quiz, register, student_info, student_question
+)
 
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
@@ -15,6 +18,9 @@ urlpatterns += [
   path('api/generate-question/', generate_reading_question, name='generate-question'),
   path("reading/latest/", latest_reading, name="latest-reading"),
   path("reading/quiz/", reading_quiz, name="reading-quiz"),
+  path("register/", register, name="register"),
+  path("student-info/", student_info, name="student-info"),
+  path("student-question/", student_question, name="student-question"),
 
 
 

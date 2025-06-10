@@ -15,16 +15,27 @@ export default function Register() {
 
   function handleSubmit(e) {
     e.preventDefault();
-    fetch("/api/register", {
+    if (form.password !== form.confirm_password) {
+      setMessage("Passwords do not match");
+      return;
+    }
+    const payload = {
+      username: form.username,
+      email: form.email,
+      password: form.password,
+    };
+    fetch("/api/register/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
+      body: JSON.stringify(payload),
     })
       .then(r => r.json())
       .then(data => {
         if (data.success) {
-          setMessage("Registered! Redirecting…");
-          setTimeout(() => navigate("/login"), 1000);
+          localStorage.setItem("access_token", data.access);
+          localStorage.setItem("refresh_token", data.refresh);
+          setMessage("Registered! Let's learn more about you...");
+          setTimeout(() => navigate("/student-info"), 1000);
         } else setMessage(data.message);
       });
   }
