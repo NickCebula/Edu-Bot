@@ -23,6 +23,7 @@ export default function App() {
         <Route path="/subjects"        element={<Subjects />} />
         <Route path="/math"            element={<Math />} />
         <Route path="/info"            element={<Dashboard />} />
+        <Route path="/dashboard"       element={<Dashboard />} />
         <Route path="/settings"        element={<StudentInfo />} />
         <Route path="/logout"          element={<Logout />} />
         <Route path="/profile"         element={<Profile />} />
