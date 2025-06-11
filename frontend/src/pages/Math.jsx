@@ -14,7 +14,7 @@ export default function Math({ username = "Guest" }) {
 
   // load initial questions
   useEffect(() => {
-    fetch("/api/questions?subject=math")
+    fetch("/api/math/quiz/")
       .then(r => r.json())
       .then(qs => setQuestions(qs));
   }, []);
