@@ -271,3 +271,24 @@ def student_question(request):
         return Response({"detail": "Profile missing"}, status=404)
     result = generate_student_question_text(profile)
     return Response({"question": result})
+
+
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def answer_feedback(request):
+    """Return encouraging AI feedback on a student's answer."""
+    student_answer = request.data.get("student_answer", "")
+    correct_answer = request.data.get("correct_answer", "")
+    prompt = (
+        f"The student answered: {student_answer}. The correct answer is {correct_answer}. "
+        "Give brief positive feedback or advice."
+    )
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": prompt}],
+        )
+        message = response.choices[0].message["content"].strip()
+    except Exception as e:
+        return Response({"error": "OpenAI error", "detail": str(e)}, status=500)
+    return Response({"message": message})
