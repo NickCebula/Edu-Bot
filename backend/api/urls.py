@@ -1,7 +1,8 @@
 from django.urls import path
 from .views import (
     get_student_profile, upsert_student_profile, get_or_generate_questions, next_question, generate_reading_question,
-    latest_reading, reading_quiz, register, student_info, student_question
+    latest_reading, reading_quiz, register, student_info, student_question,
+    answer_feedback
 )
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 urlpatterns = [
@@ -22,5 +23,6 @@ urlpatterns += [
   path("api/register", register, name="api-register"),
   path("student-info", student_info, name="student-info"),
   path("student-question", student_question, name="student-question"),
+  path("answer-feedback/", answer_feedback, name="answer-feedback"),
 
 ]

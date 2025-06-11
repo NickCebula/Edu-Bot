@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authFetch } from '../utils/authFetch';
+import AvatarAssistant from '../components/AvatarAssistant';
 
 function Reading() {
   const [questions, setQuestions] = useState([]);
@@ -8,6 +9,8 @@ function Reading() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selected, setSelected] = useState('');
   const [feedback, setFeedback] = useState('');
+  const [aiMessage, setAiMessage] = useState('');
+  const [aiEmotion, setAiEmotion] = useState('neutral');
   const [complete, setComplete] = useState(false);
   
   const navigate = useNavigate();
@@ -19,11 +22,26 @@ function Reading() {
       .catch((err) => console.error('Failed to load questions:', err));
   }, []);
 
-  const handleSelect = (choice) => {
+  const handleSelect = async (choice) => {
     if (selected) return;
     setSelected(choice);
     const correct = questions[currentIndex].correct_answer;
     setFeedback(choice === correct ? '✅ Correct!' : `❌ Correct: ${correct}`);
+
+    try {
+      const res = await fetch('/api/answer-feedback/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ student_answer: choice, correct_answer: correct }),
+      });
+      const data = await res.json();
+      if (data.message) {
+        setAiMessage(data.message);
+        setAiEmotion(choice === correct ? 'happy' : 'concerned');
+      }
+    } catch (e) {
+      console.error('Feedback error', e);
+    }
   };
 
   const handleNext = () => {
@@ -34,6 +52,7 @@ function Reading() {
       setCurrentIndex((prev) => prev + 1);
       setSelected('');
       setFeedback('');
+      setAiMessage('');
     }
   };
 
@@ -130,6 +149,7 @@ function Reading() {
         {feedback}
       </p>
     )}
+    <AvatarAssistant message={aiMessage} emotion={aiEmotion} />
   </>
 )}
 
