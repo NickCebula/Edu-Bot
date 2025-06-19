@@ -1,13 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 function Math() {
   const [questions, setQuestions] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [userAnswer, setUserAnswer] = useState('');
-  const [selected, setSelected] = useState(false); // true after submitting
+  const [selected, setSelected] = useState(false);
   const [feedback, setFeedback] = useState('');
   const [complete, setComplete] = useState(false);
+  const [inputMode, setInputMode] = useState('keypad'); // 'keypad' or 'mic'
+  const [isRecording, setIsRecording] = useState(false);
+  const recognitionRef = useRef(null);
 
   const navigate = useNavigate();
 
@@ -18,12 +21,43 @@ function Math() {
       .catch((err) => console.error('Failed to load questions:', err));
   }, []);
 
+  // Speech recognition setup
+  useEffect(() => {
+    if (!('webkitSpeechRecognition' in window)) return;
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognitionRef.current = new SpeechRecognition();
+    recognitionRef.current.lang = 'en-US';
+    recognitionRef.current.interimResults = false;
+    recognitionRef.current.maxAlternatives = 1;
+
+    recognitionRef.current.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      setUserAnswer(transcript);
+      setIsRecording(false);
+    };
+    recognitionRef.current.onend = () => setIsRecording(false);
+    recognitionRef.current.onerror = () => setIsRecording(false);
+  }, []);
+
+  const handleMicDown = () => {
+    if (recognitionRef.current && !selected) {
+      setIsRecording(true);
+      setUserAnswer('');
+      recognitionRef.current.start();
+    }
+  };
+
+  const handleMicUp = () => {
+    if (recognitionRef.current && isRecording) {
+      recognitionRef.current.stop();
+    }
+  };
+
   const handleSubmit = () => {
     if (selected) return;
     setSelected(true);
     const correctAnswers = questions[currentIndex].a.map(a => a.toLowerCase().trim());
     let ua = userAnswer.toLowerCase().trim();
-    // convert words to digits for simple numbers
     const map = { zero:"0",one:"1",two:"2",three:"3",four:"4",five:"5",six:"6",seven:"7",eight:"8",nine:"9" };
     if (map[ua]) ua = map[ua];
     setFeedback(correctAnswers.includes(ua) ? '✅ Correct!' : `❌ Correct: ${questions[currentIndex].a[1]}`);
@@ -78,14 +112,32 @@ function Math() {
         <p style={{ fontSize: '1.2em' }}>{q.q}</p>
       </div>
 
+      {/* Input Mode Toggle */}
+      <div style={{ marginBottom: '15px' }}>
+        <button
+          onClick={() => setInputMode('keypad')}
+          disabled={inputMode === 'keypad'}
+          style={{ marginRight: '10px', background: inputMode === 'keypad' ? '#4caf50' : '#e0e0e0', color: inputMode === 'keypad' ? 'white' : 'black', borderRadius: '5px', padding: '6px 16px', border: 'none' }}
+        >
+          Keypad
+        </button>
+        <button
+          onClick={() => setInputMode('mic')}
+          disabled={inputMode === 'mic'}
+          style={{ background: inputMode === 'mic' ? '#4caf50' : '#e0e0e0', color: inputMode === 'mic' ? 'white' : 'black', borderRadius: '5px', padding: '6px 16px', border: 'none' }}
+        >
+          Microphone
+        </button>
+      </div>
+
       {/* Answer Input */}
       <div style={{ marginBottom: '15px' }}>
         <input
           type="text"
           value={userAnswer}
-          disabled={selected}
+          disabled={selected || inputMode === 'mic'}
           onChange={e => setUserAnswer(e.target.value)}
-          placeholder="Type your answer"
+          placeholder={inputMode === 'mic' ? "Use the microphone" : "Type your answer"}
           style={{
             fontSize: '1.1em',
             padding: '8px',
@@ -95,23 +147,104 @@ function Math() {
           }}
           onKeyDown={e => { if (e.key === 'Enter') handleSubmit(); }}
         />
-        <button
-          onClick={handleSubmit}
-          disabled={selected || userAnswer.trim() === ''}
-          style={{
-            marginLeft: '10px',
-            padding: '8px 16px',
-            fontSize: '1em',
-            borderRadius: '5px',
-            backgroundColor: '#4caf50',
-            color: 'white',
-            border: 'none',
-            cursor: selected ? 'not-allowed' : 'pointer'
-          }}
-        >
-          Submit
-        </button>
       </div>
+
+      {/* Keypad or Microphone */}
+      {inputMode === 'keypad' && (
+//       {/* On-Screen Keypad */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '15px' }}>
+          <div style={{ display: 'flex', gap: '10px', marginBottom: '5px' }}>
+            {[1,2,3].map(n => (
+              <button key={n} disabled={selected}
+                style={{ width: 40, height: 40, fontSize: '1.2em' }}
+                onClick={() => setUserAnswer(userAnswer + n)}
+             >{n}</button>
+            ))}
+          </div>
+          <div style={{ display: 'flex', gap: '10px', marginBottom: '5px' }}>
+            {[4,5,6].map(n => (
+              <button key={n} disabled={selected}
+                style={{ width: 40, height: 40, fontSize: '1.2em' }}
+                onClick={() => setUserAnswer(userAnswer + n)}
+              >{n}</button>
+            ))}
+          </div>
+          <div style={{ display: 'flex', gap: '10px', marginBottom: '5px' }}>
+            {[7,8,9].map(n => (
+              <button key={n} disabled={selected}
+                style={{ width: 40, height: 40, fontSize: '1.2em' }}
+                onClick={() => setUserAnswer(userAnswer + n)}
+              >{n}</button>
+            ))}
+          </div>
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <button disabled={selected}
+              style={{ width: 40, height: 40, fontSize: '1.1em', backgroundColor: 'red', }}
+              onClick={() => setUserAnswer('')}
+            >C</button>
+                      <button disabled={selected}
+              style={{ width: 40, height: 40, fontSize: '1.2em' }}
+              onClick={() => setUserAnswer(userAnswer + '0')}
+            >0</button>
+            <button
+              disabled={selected || userAnswer.trim() === ''}
+              style={{
+                width: 40,
+                height: 40,
+                fontSize: '1.1em',
+                backgroundColor: '#4caf50',
+                color: 'white',
+                border: 'none',
+                borderRadius: '5px',
+               cursor: selected ? 'not-allowed' : 'pointer'
+              }}
+              onClick={handleSubmit}
+            >
+              V
+            </button>
+          </div>
+       </div>
+      )}
+
+      {inputMode === 'mic' && (
+        <div style={{ marginBottom: '15px', gap: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <button
+            disabled={selected}
+            style={{
+              width: 150,
+              height: 70,
+              fontSize: '1.1em',
+              backgroundColor: isRecording ? '#f44336' : '#4caf50',
+              color: 'white',
+              border: 'none',
+              borderRadius: '5px',
+              cursor: selected ? 'not-allowed' : 'pointer'
+            }}
+            onMouseDown={handleMicDown}
+            onMouseUp={handleMicUp}
+            onTouchStart={handleMicDown}
+            onTouchEnd={handleMicUp}
+          >
+            {isRecording ? 'Recording...' : 'Hold to Record'}
+          </button>
+          <button
+            onClick={handleSubmit}
+            disabled={selected || userAnswer.trim() === ''}
+            style={{
+              width: 100,
+              height: 50,
+              fontSize: '1.1em',
+              backgroundColor: '#4caf50',
+              color: 'white',
+              border: 'none',
+              borderRadius: '5px',
+              cursor: selected ? 'not-allowed' : 'pointer'
+            }}
+          >
+            Submit
+          </button>
+        </div>
+      )}
 
       {/* Feedback */}
       {feedback && <p style={{ marginTop: '10px', fontWeight: 'bold' }}>{feedback}</p>}
