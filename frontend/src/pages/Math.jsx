@@ -1,141 +1,129 @@
-import React, { useState, useEffect } from "react";
-import NavBar from "../components/NavBar";
-import TTSService from "../services/TTSService"; // your existing TTS wrapper
-import "../assets/Math.css";
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-export default function Math({ username = "Guest" }) {
-  const [questions, setQuestions] = useState([]); // fetch from /api/questions?subject=math
-  const [idx, setIdx] = useState(0);
-  const [answer, setAnswer] = useState("");
-  const [feedback, setFeedback] = useState("");
-  const [mode, setMode] = useState("keypad");
-  const [correctCount, setCorrectCount] = useState(0);
-  const [retry, setRetry] = useState([]);
+function Math() {
+  const [questions, setQuestions] = useState([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [userAnswer, setUserAnswer] = useState('');
+  const [selected, setSelected] = useState(false); // true after submitting
+  const [feedback, setFeedback] = useState('');
+  const [complete, setComplete] = useState(false);
 
-  // load initial questions
+  const navigate = useNavigate();
+
   useEffect(() => {
-    fetch("/api/questions?subject=math")
-      .then(r => r.json())
-      .then(qs => setQuestions(qs));
+    fetch('http://localhost:8000/api/math/quiz/')
+      .then((res) => res.json())
+      .then((data) => setQuestions(data))
+      .catch((err) => console.error('Failed to load questions:', err));
   }, []);
 
-  // TTS setup
-  const tts = new TTSService({ voice: "pNInz6obpgDQGcFmaJgB" });
-
-  function switchMode(m) {
-    setMode(m);
-  }
-
-  function appendNum(n) {
-    setAnswer(prev => prev + n);
-  }
-  function clearAnswer() {
-    setAnswer("");
-    setFeedback("");
-  }
-
-  function readQuestion() {
-    if (questions[idx]) tts.speak(questions[idx].q);
-  }
-
-  function submitAnswer() {
-    if (!questions[idx]) return;
-    let ua = answer.toLowerCase().trim();
-    // convert words → digits
+  const handleSubmit = () => {
+    if (selected) return;
+    setSelected(true);
+    const correctAnswers = questions[currentIndex].a.map(a => a.toLowerCase().trim());
+    let ua = userAnswer.toLowerCase().trim();
+    // convert words to digits for simple numbers
     const map = { zero:"0",one:"1",two:"2",three:"3",four:"4",five:"5",six:"6",seven:"7",eight:"8",nine:"9" };
     if (map[ua]) ua = map[ua];
+    setFeedback(correctAnswers.includes(ua) ? '✅ Correct!' : `❌ Correct: ${questions[currentIndex].a[1]}`);
+  };
 
-    const correct = questions[idx].a.map(a=>a.toLowerCase());
-    if (correct.includes(ua)) {
-      setFeedback("✅ Correct!");
-      setCorrectCount(c => c+1);
+  const handleNext = () => {
+    if (currentIndex === questions.length - 1) {
+      setComplete(true);
     } else {
-      setFeedback("❌ Try Again Next Time!");
-      setRetry(r => [...r, questions[idx]]);
+      setCurrentIndex((prev) => prev + 1);
+      setUserAnswer('');
+      setSelected(false);
+      setFeedback('');
     }
-    setAnswer("");
-    // progress to next after delay
-    setTimeout(() => {
-      setFeedback("");
-      if (idx+1 < questions.length) setIdx(i=>i+1);
-      else if (retry.length) {
-        setQuestions(retry);
-        setRetry([]);
-        setIdx(0);
-      }
-    }, 1000);
+  };
+
+  if (complete) {
+    return (
+      <div style={{ textAlign: 'center', marginTop: '40px' }}>
+        <h2>🎉 Great job! You completed the math quiz.</h2>
+        <button onClick={() => navigate('/subjects')}>Return to Subjects</button>
+      </div>
+    );
   }
 
-  // calculate progress width
-  const progress = questions.length
-    ? Math.round(((correctCount) / questions.length) * 100)
-    : 0;
+  if (questions.length === 0) {
+    return <p>Loading questions...</p>;
+  }
+
+  const q = questions[currentIndex];
 
   return (
-    <>
-      <NavBar
-        title="Edu-Bot Math"
-        username={username}
-        links={[{ to: "/subjects", label: "BACK" }]}
-      />
-      <div className="container">
-        <div className="progress-container">
-          <div className="progress-bar" style={{ width: `${progress}%` }} />
-        </div>
+    <div style={{ maxWidth: '700px', margin: 'auto', padding: '20px' }}>
+      <h2>🧮 Math Quiz</h2>
 
-        <div className="mode-toggle">
-          <button
-            className={mode==="mic"?"toggle-btn active":"toggle-btn"}
-            onClick={()=>switchMode("mic")}>🎤</button>
-          <button
-            className={mode==="keypad"?"toggle-btn active":"toggle-btn"}
-            onClick={()=>switchMode("keypad")}>🔢</button>
-        </div>
-
-        <div className="question">
-          {questions[idx]
-            ? `Q${idx+1}: ${questions[idx].q}`
-            : "No questions loaded."}
-          <button id="read-btn" onClick={readQuestion}>🔊 Read</button>
-        </div>
-
-        {mode==="keypad" && (
-          <div className="keypad">
-            <input
-              readOnly
-              value={answer}
-              className="answer-box"
-            />
-            <div className="keypad-grid">
-              {[1,2,3,4,5,6,7,8,9].map(n => (
-                <button key={n} onClick={() => appendNum(String(n))}>{n}</button>
-              ))}
-              <button onClick={clearAnswer} className="action">&lt;</button>
-              <button onClick={()=>appendNum("0")}>0</button>
-              <button onClick={submitAnswer} className="action">✔</button>
-            </div>
-            <div className="feedback">{feedback}</div>
-          </div>
-        )}
-
-        {mode==="mic" && (
-          <div className="mic-area">
-            <div className="mic-placeholder">🎤</div>
-            <button onClick={readQuestion}>Start Listening</button>
-            <div className="feedback">{feedback}</div>
-            <div>
-              <button onClick={submitAnswer}>✔ Submit</button>
-              <button onClick={clearAnswer}>✖ Retry</button>
-            </div>
-          </div>
-        )}
-
-        {idx >= questions.length && (
-          <button onClick={()=>window.location.href="/subjects"} className="next-lesson">
-            Next Lesson
-          </button>
-        )}
+      {/* Progress Bar */}
+      <div style={{ height: '20px', backgroundColor: '#e0e0e0', borderRadius: '10px', marginBottom: '20px' }}>
+        <div
+          style={{
+            width: `${((currentIndex + 1) / questions.length) * 100}%`,
+            height: '100%',
+            backgroundColor: '#4caf50',
+            borderRadius: '10px',
+            transition: 'width 0.3s ease',
+          }}
+        ></div>
       </div>
-    </>
+
+      {/* Question */}
+      <div style={{ backgroundColor: '#f9f9f9', padding: '15px', borderRadius: '8px', marginBottom: '20px' }}>
+        <strong>Question {currentIndex + 1} of {questions.length}:</strong>
+        <p style={{ fontSize: '1.2em' }}>{q.q}</p>
+      </div>
+
+      {/* Answer Input */}
+      <div style={{ marginBottom: '15px' }}>
+        <input
+          type="text"
+          value={userAnswer}
+          disabled={selected}
+          onChange={e => setUserAnswer(e.target.value)}
+          placeholder="Type your answer"
+          style={{
+            fontSize: '1.1em',
+            padding: '8px',
+            borderRadius: '5px',
+            border: '1px solid #ccc',
+            width: '200px'
+          }}
+          onKeyDown={e => { if (e.key === 'Enter') handleSubmit(); }}
+        />
+        <button
+          onClick={handleSubmit}
+          disabled={selected || userAnswer.trim() === ''}
+          style={{
+            marginLeft: '10px',
+            padding: '8px 16px',
+            fontSize: '1em',
+            borderRadius: '5px',
+            backgroundColor: '#4caf50',
+            color: 'white',
+            border: 'none',
+            cursor: selected ? 'not-allowed' : 'pointer'
+          }}
+        >
+          Submit
+        </button>
+      </div>
+
+      {/* Feedback */}
+      {feedback && <p style={{ marginTop: '10px', fontWeight: 'bold' }}>{feedback}</p>}
+
+      {/* Next Button */}
+      {selected && (
+        <button onClick={handleNext} style={{ marginTop: '20px' }}>
+          {currentIndex === questions.length - 1 ? 'Finish Quiz' : 'Next Question'}
+        </button>
+      )}
+    </div>
   );
 }
+
+export default Math;

@@ -6,9 +6,10 @@ from django.conf import settings
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from .models import Question, ReadingPassage
+from .models import Question, ReadingPassage, MathQuestion
 from .serializers import QuestionSerializer, ReadingPassageSerializer
 from .reading import generate_reading_data, save_reading_to_db
+from .math import generate_math_data, save_math_to_db
 
 from openai import OpenAI
 import os
@@ -20,7 +21,6 @@ load_dotenv()
 # Initialize OpenAI client
 client = OpenAI(api_key=settings.OPENAI_API_KEY)
 
-
 # ----------------------------
 # API Endpoints
 # ----------------------------
@@ -28,7 +28,6 @@ client = OpenAI(api_key=settings.OPENAI_API_KEY)
 @api_view(["GET"])
 def home(request):
     return Response({"message": "Welcome to the API!"})
-
 
 @api_view(["GET"])
 def next_question(request):
@@ -38,14 +37,12 @@ def next_question(request):
         return Response(QuestionSerializer(q).data)
     return Response({"error": "No question found for this subject"}, status=404)
 
-
 @api_view(["GET"])
 def reading_passage(request):
     passage = ReadingPassage.objects.prefetch_related('questions').order_by('?').first()
     if not passage:
         return Response({"passage": "No passage found.", "questions": []})
     return Response(ReadingPassageSerializer(passage).data)
-
 
 @csrf_exempt
 @api_view(["POST"])
@@ -56,8 +53,6 @@ def generate_reading_question(request):
 
     saved = save_reading_to_db(data)
     return JsonResponse({"message": "Saved", "passage_id": saved.id})
-
-
 
 @api_view(["GET"])
 def get_reading(request):
@@ -98,3 +93,24 @@ def reading_quiz(request):
     serializer = QuestionSerializer(questions, many=True)
     return Response(serializer.data)
 
+@api_view(["POST"])
+def generate_math_question(request):
+    data = generate_math_data()
+    if not data:
+        return Response({"error": "Failed to generate"}, status=500)
+    saved = save_math_to_db(data)
+    return Response({"message": "Saved", "id": saved.id})
+
+@api_view(["GET"])
+def math_quiz(request):
+    questions = MathQuestion.objects.order_by('?')[:5]
+    # Return both text and numeric answers as a list for each question
+    out = [
+        {
+            "id": q.id,
+            "q": q.question,
+            "a": [q.answer_text, q.answer_num]
+        }
+        for q in questions
+    ]
+    return Response(out)

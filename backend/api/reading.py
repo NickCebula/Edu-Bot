@@ -58,4 +58,3 @@ def save_reading_to_db(data):
         correct_answer=answer,
     )
     return passage
-
