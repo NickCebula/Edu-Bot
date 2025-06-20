@@ -1,4 +1,5 @@
-from django.urls import path
+from django.urls import path, include
+
 from .views import (
     get_student_profile, upsert_student_profile, get_or_generate_questions, next_question, generate_reading_question,
     latest_reading, reading_quiz, register, student_info, student_question,
@@ -10,7 +11,7 @@ urlpatterns = [
 ]
 
 urlpatterns += [
-  path("token/",   TokenObtainPairView.as_view(), name="token_obtain_pair"),
+  path("token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
   path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
   path('generate-reading/', generate_reading_question, name='generate-reading'),
   path('api/generate-question/', generate_reading_question, name='generate-question'),
@@ -24,5 +25,4 @@ urlpatterns += [
   path("student-info", student_info, name="student-info"),
   path("student-question", student_question, name="student-question"),
   path("answer-feedback/", answer_feedback, name="answer-feedback"),
-
 ]

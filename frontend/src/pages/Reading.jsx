@@ -27,6 +27,10 @@ function Reading() {
     setSelected(choice);
     const correct = questions[currentIndex].correct_answer;
     setFeedback(choice === correct ? '✅ Correct!' : `❌ Correct: ${correct}`);
+    console.log("Sending to /api/answer_feedback/:", {
+    student_answer: choice,
+    correct_answer: correct
+    });
 
     try {
       const res = await fetch('/api/answer-feedback/', {

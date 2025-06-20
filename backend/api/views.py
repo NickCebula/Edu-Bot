@@ -276,19 +276,16 @@ def student_question(request):
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def answer_feedback(request):
-    """Return encouraging AI feedback on a student's answer."""
-    student_answer = request.data.get("student_answer", "")
-    correct_answer = request.data.get("correct_answer", "")
-    prompt = (
-        f"The student answered: {student_answer}. The correct answer is {correct_answer}. "
-        "Give brief positive feedback or advice."
+    student_answer = request.data.get("student_answer")
+    correct_answer = request.data.get("correct_answer")
+    prompt = f"The student answered: {student_answer}. The correct answer is {correct_answer}. Give very brief positive feedback or advice."
+
+    response = openai.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "You are a friendly tutor giving feedback to a young student."},
+            {"role": "user", "content": prompt}
+        ]
     )
-    try:
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[{"role": "user", "content": prompt}],
-        )
-        message = response.choices[0].message["content"].strip()
-    except Exception as e:
-        return Response({"error": "OpenAI error", "detail": str(e)}, status=500)
+    message = response.choices[0].message.content
     return Response({"message": message})
