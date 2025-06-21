@@ -31,3 +31,12 @@ class MathQuestion(models.Model):
 
     def __str__(self):
         return self.prompt or "(blank math question)"
+    
+class SpellingQuestion(models.Model):
+    word = models.CharField(max_length=64)
+    image_url = models.URLField(blank=True, null=True)
+    audio_url = models.URLField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.word

@@ -6,10 +6,11 @@ from django.conf import settings
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from .models import Question, ReadingPassage, MathQuestion
+from .models import Question, ReadingPassage, MathQuestion, SpellingQuestion
 from .serializers import QuestionSerializer, ReadingPassageSerializer
 from .reading import generate_reading_data, save_reading_to_db
 from .math import generate_math_data, save_math_to_db
+from .spelling import save_spelling_to_db
 
 from openai import OpenAI
 import os
@@ -110,6 +111,27 @@ def math_quiz(request):
             "id": q.id,
             "q": q.question,
             "a": [q.answer_text, q.answer_num]
+        }
+        for q in questions
+    ]
+    return Response(out)
+
+@api_view(["POST"])
+def generate_spelling_question(request):
+    saved = save_spelling_to_db()
+    if not saved:
+        return Response({"error": "Failed to generate"}, status=500)
+    return Response({"message": "Saved", "id": saved.id})
+
+@api_view(["GET"])
+def spelling_quiz(request):
+    questions = SpellingQuestion.objects.order_by('?')[:5]
+    out = [
+        {
+            "id": q.id,
+            "word": q.word,
+            "image_url": q.image_url,
+            "audio_url": q.audio_url,
         }
         for q in questions
     ]
