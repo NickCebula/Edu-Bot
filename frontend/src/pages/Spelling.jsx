@@ -9,8 +9,8 @@ function Spelling({ username = "Guest" }) {
   const [selected, setSelected] = useState(false);
   const [feedback, setFeedback] = useState('');
   const [complete, setComplete] = useState(false);
-  const [inputMode, setInputMode] = useState('keypad'); // 'keypad' or 'mic'
   const [isRecording, setIsRecording] = useState(false);
+  const [step, setStep] = useState('pronounce'); // 'pronounce' or 'spell'
   const recognitionRef = useRef(null);
 
   const navigate = useNavigate();
@@ -54,12 +54,28 @@ function Spelling({ username = "Guest" }) {
     }
   };
 
-  const handleSubmit = () => {
+  // Step 1: Pronunciation
+  const handlePronounceSubmit = () => {
     if (selected) return;
-    setSelected(true);
     const correct = questions[currentIndex].word.toLowerCase().trim();
     let ua = userAnswer.toLowerCase().trim();
-    setFeedback(ua === correct ? '✅ Correct!' : `❌ Correct: ${questions[currentIndex].word}`);
+    if (ua === correct) {
+      setFeedback('✅ Pronunciation correct! Now spell the word.');
+      setUserAnswer('');
+      setStep('spell');
+    } else {
+      setFeedback(`❌ Incorrect, please try again.`);
+      setUserAnswer('');
+    }
+  };
+
+  // Step 2: Spelling
+  const handleSpellSubmit = () => {
+    if (selected) return;
+    const correct = questions[currentIndex].word.toLowerCase().trim();
+    let ua = userAnswer.toLowerCase().trim();
+    setSelected(true);
+    setFeedback(ua === correct ? '✅ Correct spelling!' : `❌ Correct: ${questions[currentIndex].word}`);
   };
 
   const handleNext = () => {
@@ -70,6 +86,7 @@ function Spelling({ username = "Guest" }) {
       setUserAnswer('');
       setSelected(false);
       setFeedback('');
+      setStep('pronounce');
     }
   };
 
@@ -125,88 +142,30 @@ function Spelling({ username = "Guest" }) {
           )}
         </div>
 
-        {/* Input Mode Toggle */}
-        <div style={{ marginBottom: '15px' }}>
-          <button
-            onClick={() => setInputMode('keypad')}
-            disabled={inputMode === 'keypad'}
-            style={{ marginRight: '10px', background: inputMode === 'keypad' ? '#4caf50' : '#e0e0e0', color: inputMode === 'keypad' ? 'white' : 'black', borderRadius: '5px', padding: '6px 16px', border: 'none' }}
-          >
-            Keypad
-          </button>
-          <button
-            onClick={() => setInputMode('mic')}
-            disabled={inputMode === 'mic'}
-            style={{ background: inputMode === 'mic' ? '#4caf50' : '#e0e0e0', color: inputMode === 'mic' ? 'white' : 'black', borderRadius: '5px', padding: '6px 16px', border: 'none' }}
-          >
-            Microphone
-          </button>
+        {/* Step Instructions */}
+        <div style={{ marginBottom: '15px', fontWeight: 'bold' }}>
+          {step === 'pronounce' ? 'Step 1: Pronounce the word using the microphone.' : 'Step 2: Spell the word using the keypad.'}
         </div>
 
-        {/* Answer Input */}
-        <div style={{ marginBottom: '15px' }}>
-          <input
-            type="text"
-            value={userAnswer}
-            disabled={selected || inputMode === 'mic'}
-            onChange={e => setUserAnswer(e.target.value)}
-            placeholder={inputMode === 'mic' ? "Use the microphone" : "Type your answer"}
-            style={{
-              fontSize: '1.1em',
-              padding: '8px',
-              borderRadius: '5px',
-              border: '1px solid #ccc',
-              width: '200px'
-            }}
-            onKeyDown={e => { if (e.key === 'Enter') handleSubmit(); }}
-          />
-        </div>
-
-        {/* Keypad or Microphone */}
-        {inputMode === 'keypad' && (
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '15px' }}>
-            {/* On-Screen Keypad for letters */}
-            {['QWERTYUIOP', 'ASDFGHJKL', 'ZXCVBNM'].map((row, idx) => (
-              <div key={idx} style={{ display: 'flex', gap: '6px', marginBottom: '5px' }}>
-                {row.split('').map(letter => (
-                  <button
-                    key={letter}
-                    disabled={selected}
-                    style={{ width: 36, height: 40, fontSize: '1.1em', textTransform: 'uppercase' }}
-                    onClick={() => setUserAnswer(userAnswer + letter.toLowerCase())}
-                  >{letter}</button>
-                ))}
-              </div>
-            ))}
-            <div style={{ display: 'flex', gap: '10px' }}>
-              <button
-                disabled={selected}
-                style={{ width: 80, height: 40, fontSize: '1.1em', backgroundColor: 'red', color: 'white', textAlign: 'center', }}
-                onClick={() => setUserAnswer('')}
-              >Clear</button>
-              <button
-                disabled={selected || userAnswer.trim() === ''}
-                style={{
-                  width: 80,
-                  height: 40,
-                  fontSize: '1.1em',
-                  textAlign: 'center',
-                  backgroundColor: '#4caf50',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '5px',
-                  cursor: selected ? 'not-allowed' : 'pointer'
-                }}
-                onClick={handleSubmit}
-              >
-                Submit
-              </button>
-            </div>
-          </div>
-        )}
-
-        {inputMode === 'mic' && (
+        {/* Pronounce Step */}
+        {step === 'pronounce' && (
           <div style={{ marginBottom: '15px', gap: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <input
+              type="text"
+              value={userAnswer}
+              disabled
+              placeholder="Say your answer"
+              style={{
+                fontSize: '1.1em',
+                padding: '8px',
+                borderRadius: '5px',
+                border: '1px solid #ccc',
+                width: '250px',
+                marginBottom: '10px',
+                backgroundColor: '#f5f5f5',
+                color: '#333'
+              }}
+            />
             <button
               disabled={selected}
               style={{
@@ -224,10 +183,11 @@ function Spelling({ username = "Guest" }) {
               onTouchStart={handleMicDown}
               onTouchEnd={handleMicUp}
             >
-              {isRecording ? 'Recording...' : 'Hold to Record'}
+              {isRecording ? 'Recording...' : 'Hold to Pronounce'}
             </button>
+            {/* Show what the microphone heard */}
             <button
-              onClick={handleSubmit}
+              onClick={handlePronounceSubmit}
               disabled={selected || userAnswer.trim() === ''}
               style={{
                 width: 100,
@@ -239,9 +199,64 @@ function Spelling({ username = "Guest" }) {
                 borderRadius: '5px',
                 cursor: selected ? 'not-allowed' : 'pointer'
               }}
-            >
-              Submit
-            </button>
+            >Submit</button>
+          </div>
+        )}
+
+        {/* Spell Step */}
+        {step === 'spell' && (
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '15px' }}>
+            <input
+              type="text"
+              value={userAnswer}
+              disabled={selected}
+              onChange={e => setUserAnswer(e.target.value)}
+              placeholder="Type your answer"
+              style={{
+                fontSize: '1.1em',
+                padding: '8px',
+                borderRadius: '5px',
+                border: '1px solid #ccc',
+                width: '200px',
+                marginBottom: '10px'
+              }}
+              onKeyDown={e => { if (e.key === 'Enter') handleSpellSubmit(); }}
+            />
+            {/* On-Screen Keypad for letters */}
+            {['QWERTYUIOP', 'ASDFGHJKL', 'ZXCVBNM'].map((row, idx) => (
+              <div key={idx} style={{ display: 'flex', gap: '6px', marginBottom: '5px' }}>
+                {row.split('').map(letter => (
+                  <button
+                    key={letter}
+                    disabled={selected}
+                    style={{ width: 36, height: 40, fontSize: '1.1em', textTransform: 'uppercase' }}
+                    onClick={() => setUserAnswer(userAnswer + letter.toLowerCase())}
+                  >{letter}</button>
+                ))}
+              </div>
+            ))}
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <button
+                disabled={selected}
+                style={{ width: 100, height: 50, fontSize: '1.1em', backgroundColor: 'red', color: 'white', textAlign: 'center', }}
+                onClick={() => setUserAnswer('')}
+              >Clear</button>
+              <button
+                disabled={selected || userAnswer.trim() === ''}
+                style={{
+                  width: 100,
+                  height: 50,
+                  fontSize: '1.1em',
+                  textAlign: 'center',
+                  backgroundColor: '#4caf50',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '5px',
+                  cursor: selected ? 'not-allowed' : 'pointer'
+                }}
+                onClick={handleSpellSubmit}
+              >Submit</button>
+            </div>
           </div>
         )}
 
