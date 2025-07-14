@@ -1,6 +1,12 @@
 from django.urls import path
-from .views import next_question, reading_passage, generate_reading_question, get_reading, latest_reading, reading_quiz, generate_math_question, math_quiz
+from django.conf import settings
+from django.conf.urls.static import static
 
+from .views import (
+    next_question, reading_passage, generate_reading_question, get_reading, latest_reading,
+    reading_quiz, generate_math_question, math_quiz,
+    generate_spelling_question, spelling_quiz
+)
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 urlpatterns = [
@@ -17,6 +23,9 @@ urlpatterns += [
   path("reading/quiz/", reading_quiz, name="reading-quiz"),
   path("math/generate/", generate_math_question, name="generate-math-question"),
   path("math/quiz/", math_quiz, name="math-quiz"),
-
-
+  path("spelling/generate/", generate_spelling_question, name="generate-spelling-question"),
+  path("spelling/quiz/", spelling_quiz, name="spelling-quiz"),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
