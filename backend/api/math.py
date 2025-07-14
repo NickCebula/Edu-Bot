@@ -6,16 +6,16 @@ import json
 client = OpenAI(api_key=settings.OPENAI_API_KEY)
 def generate_math_data():
     prompt = (
- 	    "Generate a math question appropriate for a 2nd grade student. "
-        "Randomly choose the math operation (addition, subtraction), and randomly choose numbers between 1 and 20."
+ 	    "Generate a math question appropriate for a 2nd grade student."
+        "Randomly pick a math operation (addition, subtraction), and choose numbers between 1 and 20."
         "Vary the questions each time so they are not repeated."
         "Then save the number answer and the text answer. "
-        "Return ONLY valid JSON like this example:\n\n"
+        "Return ONLY valid JSON like this example:\n"
         "{\n"
         '  "question": "2 + 2 = ?",\n'
         '  "answer_text": "four",\n'
         '  "answer_num": "4",\n'
-        "}\n\n"
+        "}\n"
         "Do not explain the answer or include any extra text."
     )
 

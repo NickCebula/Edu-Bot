@@ -75,7 +75,7 @@ function Spelling({ username = "Guest" }) {
     const correct = questions[currentIndex].word.toLowerCase().trim();
     let ua = userAnswer.toLowerCase().trim();
     setSelected(true);
-    setFeedback(ua === correct ? '✅ Correct spelling!' : `❌ Correct: ${questions[currentIndex].word}`);
+    setFeedback(ua === correct ? '✅ Correct spelling!' : `❌ Incorrect, please try again.`);
   };
 
   const handleNext = () => {

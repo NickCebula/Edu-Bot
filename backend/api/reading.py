@@ -6,16 +6,17 @@ import json
 client = OpenAI(api_key=settings.OPENAI_API_KEY)
 def generate_reading_data():
     prompt = (
-        "Generate a short reading passage appropriate for a 2nd grade student. "
-        "Then generate one multiple-choice question about the passage with four answer choices. "
-        "Randomize the order of the choices. Return ONLY valid JSON in this format:\n\n"
+        "Generate a short reading passage appropriate for a 2nd grade student."
+        "Then generate one multiple-choice question about the passage with four answer choices."
+        "Randomize the order of the choices."
+        "Return ONLY valid JSON in this format:\n"
         "{\n"
         '  "passage": "Text of the passage...",\n'
         '  "question": "Question text...",\n'
         '  "options": ["Option A", "Option B", "Option C", "Option D"],\n'
         '  "answer": "A"\n'
-        "}\n\n"
-        "The answer should be the letter of the correct choice (A, B, C, or D). "
+        "}\n"
+        "The answer should be the letter of the correct choice (A, B, C, or D)."
         "Do not explain the answer or include any extra text."
     )
 

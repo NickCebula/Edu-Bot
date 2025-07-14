@@ -6,10 +6,15 @@ import os
 
 client = OpenAI(api_key=settings.OPENAI_API_KEY)
 
+import random
+
+categories = ["animals", "food", "toys", "nature", "vehicles", "clothing", "sports equipment"]
+category = random.choice(categories)
+
 def generate_spelling_word():
     prompt = (
-        "Generate a single, common, concrete English noun suitable for a 2nd grade spelling test. "
-        "Vary the word each time so they are not repeated. Use a word that would make a colorful/playful image."
+        "Generate a single English noun from the category {category}."
+        "Vary the word each time so they are not repeated." 
         "Return ONLY valid JSON like this example:\n"
         '{\n  "word": "apple"\n}\n'
         "Do not include any extra text or explanation."
@@ -23,7 +28,8 @@ def generate_spelling_word():
                 "content": "You are a spelling tutor that creates age-appropriate spelling words for 2nd grade students. You only respond with properly formatted JSON."
             },
             {"role": "user", "content": prompt}
-        ]
+        ],
+        temperature=1.5,
     )
 
     result = response.choices[0].message.content.strip()
@@ -41,7 +47,7 @@ def generate_spelling_image(word):
     """
     response = client.images.generate(
         model="dall-e-3",  # or "dall-e-2"
-        prompt=f"A clear and simple clipart/cartoon of a {word}, white background, no text.",
+        prompt=f"Create a simple cartoon image of a {word} with a white (#FFFFFF) background. Do not include any text or writing in the image.",
         size="1024x1024",
         n=1
     )
@@ -90,6 +96,5 @@ def save_spelling_to_db():
         word=word,
         image_url=image_url,
         audio_url=audio_url
-
     )
     return spelling_question
