@@ -41,8 +41,7 @@ class StudentProfile(models.Model):
     )
 
     full_name         = models.CharField(max_length=100)
-    age_or_grade      = models.CharField(max_length=20,
-                                         help_text="E.g. '8', '3rd grade', etc.")
+    age_or_grade      = models.CharField(max_length=100, help_text="E.g. '8', '3rd grade', etc.")
     reading_level     = models.CharField(
         max_length=20,
         choices=[
@@ -85,7 +84,7 @@ class StudentProfile(models.Model):
             ("Both", "Both / No preference"),
         ]
     )
-    additional_notes  = models.TextField(blank=True)
+    additional_notes  = models.TextField(max_length=255, blank=True)
     created_at        = models.DateTimeField(auto_now_add=True)
     updated_at        = models.DateTimeField(auto_now=True)
 
@@ -126,9 +125,9 @@ class GeneratedQuestionSet(models.Model):
 
 class StudentProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
-    grade = models.CharField(max_length=20)
+    grade = models.CharField(max_length=100, blank=True)
     favorite_subject = models.CharField(max_length=50, blank=True)
-    notes = models.TextField(blank=True)
+    notes = models.TextField(max_length=255, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
