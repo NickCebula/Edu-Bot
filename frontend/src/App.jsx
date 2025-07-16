@@ -11,11 +11,13 @@ import Spelling from "./pages/Spelling";
 import StudentInfo from "./pages/StudentInfo";
 import Dashboard from "./pages/Dashboard";
 import Logout from "./pages/Logout";
+import LandingPage from "./pages/LandingPage";
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path ="/"               element={<LandingPage />} />
         <Route path="/login"           element={<Login />} />
         <Route path="/register"        element={<Register />} />
         <Route path="/student-info"    element={<StudentInfo />} />
