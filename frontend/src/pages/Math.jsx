@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import NavBar from "../components/NavBar"; // Add this import
+import NavBar from "../components/NavBar";
+import '../assets/Math.css';
 
 function Math() {
   const [questions, setQuestions] = useState([]);
@@ -101,123 +102,95 @@ function Math() {
   return (
     <>
     <NavBar title="Edu-Bot Math" username="Guest" color="red" />
-    <div style={{ maxWidth: '700px', margin: 'auto', padding: '20px' }}>
+    <div className="math-container">
       <h2>🧮 Math Quiz</h2>
 
       {/* Progress Bar */}
-      <div style={{ height: '20px', backgroundColor: '#e0e0e0', borderRadius: '10px', marginBottom: '20px' }}>
+      <div className="math-progress-bar-bg">
         <div
+          className="math-progress-bar"
           style={{
-            width: `${((currentIndex + 1) / questions.length) * 100}%`,
-            height: '100%',
-            backgroundColor: '#4caf50',
-            borderRadius: '10px',
-            transition: 'width 0.3s ease',
+            width: `${((currentIndex + 1) / questions.length) * 100}%`
           }}
         ></div>
       </div>
 
       {/* Question */}
-      <div style={{ backgroundColor: '#f9f9f9', padding: '15px', borderRadius: '8px', marginBottom: '20px' }}>
+      <div className="math-question-box">
         <strong>Question {currentIndex + 1} of {questions.length}:</strong>
-        <p style={{ fontSize: '1.2em' }}>{q.q}</p>
+        <p className="math-question-text">{q.q}</p>
       </div>
 
       {/* Input Mode Toggle */}
-      <div style={{ marginBottom: '15px' }}>
+      <div className="math-input-toggle">
         <button
           onClick={() => setInputMode('keypad')}
           disabled={inputMode === 'keypad'}
-          style={{ marginRight: '10px', background: inputMode === 'keypad' ? '#4caf50' : '#e0e0e0', color: inputMode === 'keypad' ? 'white' : 'black', borderRadius: '5px', padding: '6px 16px', border: 'none' }}
+          className={`math-toggle-btn${inputMode === 'keypad' ? ' active' : ''}`}
         >
           Keypad
         </button>
         <button
           onClick={() => setInputMode('mic')}
           disabled={inputMode === 'mic'}
-          style={{ background: inputMode === 'mic' ? '#4caf50' : '#e0e0e0', color: inputMode === 'mic' ? 'white' : 'black', borderRadius: '5px', padding: '6px 16px', border: 'none' }}
+          className={`math-toggle-btn${inputMode === 'mic' ? ' active' : ''}`}
         >
           Microphone
         </button>
       </div>
 
       {/* Answer Input */}
-      <div style={{ marginBottom: '15px' }}>
+      <div className="math-answer-input">
         <input
           type="text"
           value={userAnswer}
           disabled={selected || inputMode === 'mic'}
           onChange={e => setUserAnswer(e.target.value)}
           placeholder={inputMode === 'mic' ? "Use the microphone" : "Type your answer"}
-          style={{
-            fontSize: '1.1em',
-            padding: '8px',
-            borderRadius: '5px',
-            border: '1px solid #ccc',
-            width: '200px'
-          }}
+          className="math-answer-input-box"
           onKeyDown={e => { if (e.key === 'Enter') handleSubmit(); }}
         />
       </div>
 
       {/* Keypad or Microphone */}
       {inputMode === 'keypad' && (
-//       {/* On-Screen Keypad */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '15px' }}>
-          <div style={{ display: 'flex', gap: '10px', marginBottom: '5px' }}>
+        <div className="math-keypad">
+          <div className="math-keypad-row">
             {[1,2,3].map(n => (
               <button key={n} disabled={selected}
-                style={{ width: 40, height: 40, fontSize: '1.2em' }}
+                className="math-keypad-btn"
                 onClick={() => setUserAnswer(userAnswer + n)}
              >{n}</button>
             ))}
           </div>
-          <div style={{ display: 'flex', gap: '10px', marginBottom: '5px' }}>
+          <div className="math-keypad-row">
             {[4,5,6].map(n => (
               <button key={n} disabled={selected}
-                style={{ width: 40, height: 40, fontSize: '1.2em' }}
+                className="math-keypad-btn"
                 onClick={() => setUserAnswer(userAnswer + n)}
               >{n}</button>
             ))}
           </div>
-          <div style={{ display: 'flex', gap: '10px', marginBottom: '5px' }}>
+          <div className="math-keypad-row">
             {[7,8,9].map(n => (
               <button key={n} disabled={selected}
-                style={{ width: 40, height: 40, fontSize: '1.2em' }}
+                className="math-keypad-btn"
                 onClick={() => setUserAnswer(userAnswer + n)}
               >{n}</button>
             ))}
           </div>
-          <div style={{ display: 'flex', gap: '10px' }}>
+          <div className="math-keypad-row">
             <button disabled={selected}
-              style={{
-                width: 40,
-                height: 40,
-                fontSize: '1.1em',
-                backgroundColor: '#f44336',
-                color: 'white',
-                border: 'none',
-                borderRadius: '5px',
-                cursor: selected ? 'not-allowed' : 'pointer'
-              }}
+              className="math-keypad-btn clear"
               onClick={() => setUserAnswer('')}
             >C</button>
             <button disabled={selected}
-              style={{ width: 40, height: 40, fontSize: '1.2em' }}
+              className="math-keypad-btn"
               onClick={() => setUserAnswer(userAnswer + '0')}
             >0</button>
             <button
               disabled={selected || userAnswer.trim() === ''}
-              style={{
-                width: 40,
-                height: 40,
-                fontSize: '1.1em',
-                backgroundColor: '#4caf50',
-                color: 'white',
-                border: 'none',
-                borderRadius: '5px',
-               cursor: selected ? 'not-allowed' : 'pointer'
-              }}
+              className="math-keypad-btn submit"
               onClick={handleSubmit}
             >V</button>
           </div>
@@ -225,19 +198,10 @@ function Math() {
       )}
 
       {inputMode === 'mic' && (
-        <div style={{ marginBottom: '15px', gap: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <div className="math-mic-section">
           <button
             disabled={selected}
-            style={{
-              width: 150,
-              height: 70,
-              fontSize: '1.1em',
-              backgroundColor: isRecording ? '#f44336' : '#4caf50',
-              color: 'white',
-              border: 'none',
-              borderRadius: '5px',
-              cursor: selected ? 'not-allowed' : 'pointer'
-            }}
+            className={`math-mic-btn${isRecording ? ' recording' : ''}`}
             onMouseDown={handleMicDown}
             onMouseUp={handleMicUp}
             onTouchStart={handleMicDown}
@@ -248,16 +212,7 @@ function Math() {
           <button
             onClick={handleSubmit}
             disabled={selected || userAnswer.trim() === ''}
-            style={{
-              width: 100,
-              height: 50,
-              fontSize: '1.1em',
-              backgroundColor: '#4caf50',
-              color: 'white',
-              border: 'none',
-              borderRadius: '5px',
-              cursor: selected ? 'not-allowed' : 'pointer'
-            }}
+            className="math-mic-submit-btn"
           >
             Submit
           </button>
@@ -265,11 +220,11 @@ function Math() {
       )}
 
       {/* Feedback */}
-      {feedback && <p style={{ marginTop: '10px', fontWeight: 'bold' }}>{feedback}</p>}
+      {feedback && <p className="math-feedback">{feedback}</p>}
 
       {/* Next Button */}
       {selected && (
-        <button onClick={handleNext} style={{ marginTop: '20px' }}>
+        <button onClick={handleNext} className="math-next-btn">
           {currentIndex === questions.length - 1 ? 'Finish Quiz' : 'Next Question'}
         </button>
       )}
