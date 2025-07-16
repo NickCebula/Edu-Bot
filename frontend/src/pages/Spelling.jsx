@@ -16,7 +16,7 @@ function Spelling({ username = "Guest" }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('http://localhost:8000/api/spelling/quiz/')
+    fetch('/api/spelling/quiz/')
       .then((res) => res.json())
       .then((data) => setQuestions(data))
       .catch((err) => console.error('Failed to load questions:', err));
@@ -24,7 +24,7 @@ function Spelling({ username = "Guest" }) {
 
   // Speech recognition setup
   useEffect(() => {
-    if (!('webkitSpeechRecognition' in window)) return;
+    if (!('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) return;
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     recognitionRef.current = new SpeechRecognition();
     recognitionRef.current.lang = 'en-US';
@@ -100,22 +100,30 @@ function Spelling({ username = "Guest" }) {
 
   if (complete) {
     return (
-      <div style={{ textAlign: 'center', marginTop: '40px' }}>
-        <h2>🎉 Great job! You completed the spelling quiz.</h2>
-        <button onClick={() => navigate('/subjects')}>Return to Subjects</button>
-      </div>
+      <>
+        <NavBar title="Edu-Bot Spelling" username={username} color="blue"/>
+        <div style={{ textAlign: 'center', marginTop: '40px' }}>
+          <h2>🎉 Great job! You completed the spelling quiz.</h2>
+          <button onClick={() => navigate('/subjects')}>Return to Subjects</button>
+        </div>
+      </>
     );
   }
 
   if (questions.length === 0) {
-    return <p>Loading questions...</p>;
+    return (
+      <>
+        <NavBar title="Edu-Bot Spelling" username={username} color="blue" />
+        <p>Loading questions...</p>
+      </>
+    );
   }
 
   const q = questions[currentIndex];
 
   return (
     <>
-      <NavBar title="Edu-Bot" username={username} />
+      <NavBar title="Edu-Bot Spelling" username={username} color="blue" />
       <div style={{ maxWidth: '700px', margin: 'auto', padding: '20px' }}>
         <h2>📝 Spelling Quiz</h2>
 
@@ -183,7 +191,7 @@ function Spelling({ username = "Guest" }) {
               onTouchStart={handleMicDown}
               onTouchEnd={handleMicUp}
             >
-              {isRecording ? 'Recording...' : 'Hold to Pronounce'}
+              {isRecording ? 'Recording...' : 'Hold to Record'}
             </button>
             {/* Show what the microphone heard */}
             <button

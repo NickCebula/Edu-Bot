@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import NavBar from "../components/NavBar"; // Add this import
 
 function Reading() {
   const [questions, setQuestions] = useState([]);
@@ -38,22 +39,32 @@ function Reading() {
 
   if (complete) {
     return (
-      <div style={{ textAlign: 'center', marginTop: '40px' }}>
-        <h2>🎉 Great job! You completed the quiz.</h2>
-        <button onClick={() => navigate('/subjects')}>Return to Subjects</button>
-      </div>
+      <>
+        <NavBar title="Edu-Bot Reading" username="Guest" color="lightgreen" />
+        <div style={{ textAlign: 'center', marginTop: '40px' }}>
+          <h2>🎉 Great job! You completed the quiz.</h2>
+          <button onClick={() => navigate('/subjects')}>Return to Subjects</button>
+        </div>
+      </>
     );
   }
 
   if (questions.length === 0) {
-    return <p>Loading questions...</p>;
+    return (
+      <>
+        <NavBar title="Edu-Bot Reading" username="Guest" color="lightgreen" />
+        <p>Loading questions...</p>
+      </>
+    );
   }
 
   const q = questions[currentIndex];
 
   return (
+    <>
+    <NavBar title="Edu-Bot Reading" username="Guest" color="lightgreen" />
     <div style={{ maxWidth: '700px', margin: 'auto', padding: '20px' }}>
-      <h2>📚 Reading Comprehension Quiz</h2>
+      <h2>📚 Reading Quiz</h2>
 
       {/* Progress Bar */}
       <div style={{ height: '20px', backgroundColor: '#e0e0e0', borderRadius: '10px', marginBottom: '20px' }}>
@@ -122,6 +133,7 @@ function Reading() {
         </button>
       )}
     </div>
+    </>
   );
 }
 

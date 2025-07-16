@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import NavBar from "../components/NavBar"; // Add this import
 
 function Math() {
   const [questions, setQuestions] = useState([]);
@@ -15,7 +16,7 @@ function Math() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('http://localhost:8000/api/math/quiz/')
+    fetch('/api/math/quiz/')
       .then((res) => res.json())
       .then((data) => setQuestions(data))
       .catch((err) => console.error('Failed to load questions:', err));
@@ -23,7 +24,7 @@ function Math() {
 
   // Speech recognition setup
   useEffect(() => {
-    if (!('webkitSpeechRecognition' in window)) return;
+    if (!('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) return;
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     recognitionRef.current = new SpeechRecognition();
     recognitionRef.current.lang = 'en-US';
@@ -76,20 +77,30 @@ function Math() {
 
   if (complete) {
     return (
-      <div style={{ textAlign: 'center', marginTop: '40px' }}>
-        <h2>🎉 Great job! You completed the math quiz.</h2>
-        <button onClick={() => navigate('/subjects')}>Return to Subjects</button>
-      </div>
+      <>
+        <NavBar title="Edu-Bot Math" username="Guest" color="red" />
+        <div style={{ textAlign: 'center', marginTop: '40px' }}>
+          <h2>🎉 Great job! You completed the math quiz.</h2>
+          <button onClick={() => navigate('/subjects')}>Return to Subjects</button>
+        </div>
+      </>
     );
   }
 
   if (questions.length === 0) {
-    return <p>Loading questions...</p>;
+    return (
+      <>
+        <NavBar title="Edu-Bot Math" username="Guest" color="red" />
+        <p>Loading questions...</p>
+      </>
+    );
   }
 
   const q = questions[currentIndex];
 
   return (
+    <>
+    <NavBar title="Edu-Bot Math" username="Guest" color="red" />
     <div style={{ maxWidth: '700px', margin: 'auto', padding: '20px' }}>
       <h2>🧮 Math Quiz</h2>
 
@@ -179,10 +190,19 @@ function Math() {
           </div>
           <div style={{ display: 'flex', gap: '10px' }}>
             <button disabled={selected}
-              style={{ width: 40, height: 40, fontSize: '1.1em', backgroundColor: 'red', }}
+              style={{
+                width: 40,
+                height: 40,
+                fontSize: '1.1em',
+                backgroundColor: '#f44336',
+                color: 'white',
+                border: 'none',
+                borderRadius: '5px',
+                cursor: selected ? 'not-allowed' : 'pointer'
+              }}
               onClick={() => setUserAnswer('')}
             >C</button>
-                      <button disabled={selected}
+            <button disabled={selected}
               style={{ width: 40, height: 40, fontSize: '1.2em' }}
               onClick={() => setUserAnswer(userAnswer + '0')}
             >0</button>
@@ -199,9 +219,7 @@ function Math() {
                cursor: selected ? 'not-allowed' : 'pointer'
               }}
               onClick={handleSubmit}
-            >
-              V
-            </button>
+            >V</button>
           </div>
        </div>
       )}
@@ -256,6 +274,7 @@ function Math() {
         </button>
       )}
     </div>
+    </>
   );
 }
 
