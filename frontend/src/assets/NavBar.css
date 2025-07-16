@@ -19,13 +19,13 @@
 }
 
 .navbar.red {
-  background: #b71c1c;
+  background: red;
 }
 .navbar.lightgreen {
-  background: #388e3c;
+  background: lightgreen;
 }
 .navbar.blue {
-  background: #0d47a1;
+  background: blue;
 }
 
 .logo {
