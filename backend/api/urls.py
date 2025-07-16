@@ -5,7 +5,7 @@ from django.conf.urls.static import static
 from .views import (
     next_question, reading_passage, generate_reading_question, get_reading, latest_reading,
     reading_quiz, generate_math_question, math_quiz,
-    generate_spelling_question, spelling_quiz
+    generate_spelling_question, spelling_quiz, register_user
 )
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
@@ -25,6 +25,7 @@ urlpatterns += [
   path("math/quiz/", math_quiz, name="math-quiz"),
   path("spelling/generate/", generate_spelling_question, name="generate-spelling-question"),
   path("spelling/quiz/", spelling_quiz, name="spelling-quiz"),
+  path("register/", register_user, name="register_user"),
 ]
 
 if settings.DEBUG:

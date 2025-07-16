@@ -15,17 +15,40 @@ export default function Register() {
 
   function handleSubmit(e) {
     e.preventDefault();
-    fetch("/api/register", {
+
+    // adjust payload shape
+    const payload = {
+      username: form.username,
+      email: form.email,
+      password1: form.password,
+      password2: form.confirm_password
+    };
+
+    fetch("http://localhost:8000/api/register/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
+      body: JSON.stringify(payload),
+      credentials: "include" // for cookies, CSRF if needed
     })
       .then(r => r.json())
       .then(data => {
-        if (data.success) {
+        if (data.detail || data.error) {
+          setMessage(data.detail || data.error);
+        } else if (data.username || data.password1) {
+          // field errors
+          const errors = [];
+          for (let field in data) {
+            errors.push(`${field}: ${data[field].join(", ")}`);
+          }
+          setMessage(errors.join(" | "));
+        } else {
           setMessage("Registered! Redirecting…");
           setTimeout(() => navigate("/login"), 1000);
-        } else setMessage(data.message);
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        setMessage("Registration failed. Please try again.");
       });
   }
 

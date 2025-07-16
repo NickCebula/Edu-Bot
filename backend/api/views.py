@@ -5,9 +5,11 @@ from django.conf import settings
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework import status
 
 from .models import Question, ReadingPassage, MathQuestion, SpellingQuestion
-from .serializers import QuestionSerializer, ReadingPassageSerializer
+from .serializers import QuestionSerializer, ReadingPassageSerializer, RegisterSerializer
 from .reading import generate_reading_data, save_reading_to_db
 from .math import generate_math_data, save_math_to_db
 from .spelling import save_spelling_to_db
@@ -136,3 +138,11 @@ def spelling_quiz(request):
         for q in questions
     ]
     return Response(out)
+
+@api_view(["POST"])
+def register_user(request):
+    serializer = RegisterSerializer(data=request.data)
+    if serializer.is_valid():
+        user = serializer.save()
+        return Response({"message": "User created successfully", "user_id": user.id}, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
