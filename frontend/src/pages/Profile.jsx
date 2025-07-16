@@ -20,9 +20,13 @@ export default function Profile() {
   return (
     <>
       <NavBar
-        title="Edu-Bot Math"
+        title="Edu-Bot"
         username={username}
-        links={[{ to: "/subjects", label: "BACK" }]}
+        links={[
+          { to: "/subjects", label: "SUBJECTS" },
+          { to: "/evaluations", label: "EVALUATIONS" },
+          { to: "/profile", label: "PROFILE" },
+        ]}
       />
 
       <div className="profile-container">
