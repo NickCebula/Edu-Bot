@@ -34,8 +34,8 @@ class MathQuestion(models.Model):
     
 class SpellingQuestion(models.Model):
     word = models.CharField(max_length=64)
-    image_url = models.URLField(blank=True, null=True)
-    audio_url = models.URLField(blank=True, null=True)
+    image_url = models.URLField(max_length=1000, blank=True, null=True)
+    audio_url = models.URLField(max_length=1000, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

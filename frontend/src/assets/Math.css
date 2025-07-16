@@ -67,3 +67,135 @@ body {
 .reading { background: lightgreen; }
 .spelling{ background: blue; }
 
+/* === Math.jsx styles below === */
+.math-container {
+  max-width: 700px;
+  margin: auto;
+  padding: 20px;
+}
+.math-progress-bar-bg {
+  height: 20px;
+  background-color: #e0e0e0;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+.math-progress-bar {
+  height: 100%;
+  background-color: #4caf50;
+  border-radius: 10px;
+  transition: width 0.3s ease;
+}
+.math-question-box {
+  background-color: #f9f9f9;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+.math-question-text {
+  font-size: 1.2em;
+}
+.math-input-toggle {
+  margin-bottom: 15px;
+}
+.math-toggle-btn {
+  margin-right: 10px;
+  border-radius: 5px;
+  padding: 6px 16px;
+  border: none;
+  font-size: 1em;
+  background: #e0e0e0;
+  color: black;
+  cursor: pointer;
+}
+.math-toggle-btn.active {
+  background: #4caf50;
+  color: white;
+  cursor: default;
+}
+.math-answer-input {
+  margin-bottom: 15px;
+}
+.math-answer-input-box {
+  font-size: 1.1em;
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  width: 200px;
+}
+.math-keypad {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 15px;
+}
+.math-keypad-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 5px;
+}
+.math-keypad-btn {
+  width: 40px;
+  height: 40px;
+  font-size: 1.2em;
+  border-radius: 5px;
+  border: none;
+  background: #e0e0e0;
+  color: black;
+  cursor: pointer;
+}
+.math-keypad-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+.math-keypad-btn.clear {
+  background-color: #f44336;
+  color: white;
+  font-size: 1.1em;
+}
+.math-keypad-btn.submit {
+  background-color: #4caf50;
+  color: white;
+  font-size: 1.1em;
+}
+.math-mic-section {
+  margin-bottom: 15px;
+  gap: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.math-mic-btn {
+  width: 150px;
+  height: 70px;
+  font-size: 1.1em;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.math-mic-btn.recording {
+  background-color: #f44336;
+}
+.math-mic-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+.math-mic-submit-btn {
+  width: 100px;
+  height: 50px;
+  font-size: 1.1em;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.math-feedback {
+  margin-top: 10px;
+  font-weight: bold;
+}
+.math-next-btn {
+  margin-top: 20px;
+}
