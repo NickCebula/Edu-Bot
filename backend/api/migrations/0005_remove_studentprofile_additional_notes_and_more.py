@@ -13,50 +13,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='studentprofile',
-            name='additional_notes',
-        ),
-        migrations.RemoveField(
-            model_name='studentprofile',
-            name='age_or_grade',
-        ),
-        migrations.RemoveField(
-            model_name='studentprofile',
-            name='challenging_areas',
-        ),
-        migrations.RemoveField(
-            model_name='studentprofile',
-            name='favorite_subjects',
-        ),
-        migrations.RemoveField(
-            model_name='studentprofile',
-            name='fiction_preference',
-        ),
-        migrations.RemoveField(
-            model_name='studentprofile',
-            name='full_name',
-        ),
-        migrations.RemoveField(
-            model_name='studentprofile',
-            name='interests',
-        ),
-        migrations.RemoveField(
-            model_name='studentprofile',
-            name='learning_styles',
-        ),
-        migrations.RemoveField(
-            model_name='studentprofile',
-            name='preferred_length',
-        ),
-        migrations.RemoveField(
-            model_name='studentprofile',
-            name='reading_level',
-        ),
-        migrations.RemoveField(
-            model_name='studentprofile',
-            name='updated_at',
-        ),
         migrations.AddField(
             model_name='studentprofile',
             name='favorite_subject',
