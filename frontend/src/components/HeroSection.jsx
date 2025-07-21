@@ -1,6 +1,7 @@
 // src/components/LandingPage.jsx
 import React from 'react';
 import HeroSection from './HeroSection';
+import "../assets/HeroSection.css";
 //import FeatureCard from './FeatureCard';
 import screenshot1 from '../assets/screenshot1.webp'
 // import screenshot2 from '../assets/screenshot2.png';
