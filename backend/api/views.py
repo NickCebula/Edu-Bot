@@ -7,8 +7,10 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import permission_classes
 
-from .models import Question, ReadingPassage, MathQuestion, SpellingQuestion
+from .models import Question, ReadingPassage, MathQuestion, SpellingQuestion, UserProfile
 from .serializers import QuestionSerializer, ReadingPassageSerializer, RegisterSerializer
 from .reading import generate_reading_data, save_reading_to_db
 from .math import generate_math_data, save_math_to_db
@@ -144,5 +146,38 @@ def register_user(request):
     serializer = RegisterSerializer(data=request.data)
     if serializer.is_valid():
         user = serializer.save()
-        return Response({"message": "User created successfully", "user_id": user.id}, status=status.HTTP_201_CREATED)
+        # Fetch the created profile to return all profile info
+        profile = UserProfile.objects.get(user=user)
+        profile_data = {
+            "username": user.username,
+            "email": user.email,
+            "name": profile.name,
+            "age": profile.age,
+            "state": profile.state,
+            "favorite_subject": profile.favorite_subject,
+            "favorite_hobby": profile.favorite_hobby,
+        }
+        return Response(
+            {"message": "User created successfully", "user_id": user.id, "profile": profile_data},
+            status=status.HTTP_201_CREATED
+        )
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def get_profile(request):
+    user = request.user
+    try:
+        profile = UserProfile.objects.get(user=user)
+        profile_data = {
+            "username": user.username,
+            "email": user.email,
+            "name": profile.name,
+            "age": profile.age,
+            "state": profile.state,
+            "favorite_subject": profile.favorite_subject,
+            "favorite_hobby": profile.favorite_hobby,
+        }
+        return Response(profile_data, status=status.HTTP_200_OK)
+    except UserProfile.DoesNotExist:
+        return Response({"error": "Profile not found"}, status=status.HTTP_404_NOT_FOUND)

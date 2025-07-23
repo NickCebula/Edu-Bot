@@ -4,7 +4,8 @@ import "../assets/Register.css";
 
 export default function Register() {
   const [form, setForm] = useState({
-    username: "", email: "", password: "", confirm_password: ""
+    username: "", email: "", password: "", confirm_password: "",
+    name: "", age: "", state: "", favorite_subject: "", favorite_hobby: ""
   });
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
@@ -16,12 +17,16 @@ export default function Register() {
   function handleSubmit(e) {
     e.preventDefault();
 
-    // adjust payload shape
     const payload = {
       username: form.username,
       email: form.email,
       password1: form.password,
-      password2: form.confirm_password
+      password2: form.confirm_password,
+      name: form.name,
+      age: form.age,
+      state: form.state,
+      favorite_subject: form.favorite_subject,
+      favorite_hobby: form.favorite_hobby
     };
 
     fetch("http://localhost:8000/api/register/", {
@@ -61,6 +66,11 @@ export default function Register() {
         <input name="email" placeholder="Email" type="email" required onChange={handleChange}/>
         <input name="password" placeholder="Password" type="password" required onChange={handleChange}/>
         <input name="confirm_password" placeholder="Confirm Password" type="password" required onChange={handleChange}/>
+        <input name="name" placeholder="Full Name" required onChange={handleChange}/>
+        <input name="age" placeholder="Age" type="number" required onChange={handleChange}/>
+        <input name="state" placeholder="State" required onChange={handleChange}/>
+        <input name="favorite_subject" placeholder="Favorite Subject" required onChange={handleChange}/>
+        <input name="favorite_hobby" placeholder="Favorite Hobby" required onChange={handleChange}/>
         <button type="submit">Register</button>
       </form>
       <p>Already have an account? <Link to="/login">Login here</Link></p>
