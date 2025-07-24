@@ -67,9 +67,30 @@ export default function Register() {
         <input name="password" placeholder="Password" type="password" required onChange={handleChange}/>
         <input name="confirm_password" placeholder="Confirm Password" type="password" required onChange={handleChange}/>
         <input name="name" placeholder="Full Name" required onChange={handleChange}/>
-        <input name="age" placeholder="Age" type="number" required onChange={handleChange}/>
-        <input name="state" placeholder="State" required onChange={handleChange}/>
-        <input name="favorite_subject" placeholder="Favorite Subject" required onChange={handleChange}/>
+        <select name="age" required onChange={handleChange} value={form.age}>
+          <option value="">Select Age</option>
+          {[...Array(15)].map((_, i) => (
+            <option key={i+4} value={i+4}>{i+4}</option>
+          ))}
+        </select>
+        <select name="state" required onChange={handleChange} value={form.state}>
+          <option value="">Select State</option>
+          {[
+            "AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA",
+            "HI","ID","IL","IN","IA","KS","KY","LA","ME","MD",
+            "MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ",
+            "NM","NY","NC","ND","OH","OK","OR","PA","RI","SC",
+            "SD","TN","TX","UT","VT","VA","WA","WV","WI","WY"
+          ].map(st => (
+            <option key={st} value={st}>{st}</option>
+          ))}
+        </select>
+        <select name="favorite_subject" required onChange={handleChange} value={form.favorite_subject}>
+          <option value="">Select Favorite Subject</option>
+          <option value="Math">Math</option>
+          <option value="Reading">Reading</option>
+          <option value="Spelling">Spelling</option>
+        </select>
         <input name="favorite_hobby" placeholder="Favorite Hobby" required onChange={handleChange}/>
         <button type="submit">Register</button>
       </form>
