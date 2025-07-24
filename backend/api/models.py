@@ -1,4 +1,16 @@
 from django.db import models
+from django.contrib.auth.models import User
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    name = models.CharField(max_length=100)
+    age = models.PositiveIntegerField()
+    state = models.CharField(max_length=100)
+    favorite_subject = models.CharField(max_length=100)
+    favorite_hobby = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f"{self.user.username}'s profile"
 
 class ReadingPassage(models.Model):
     genre = models.CharField(max_length=50, default="General")

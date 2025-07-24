@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import ReadingPassage, Question
+from .models import ReadingPassage, Question, UserProfile
 from django.contrib.auth.models import User
 
 class QuestionSerializer(serializers.ModelSerializer):
@@ -23,10 +23,18 @@ class ReadingPassageSerializer(serializers.ModelSerializer):
 class RegisterSerializer(serializers.ModelSerializer):
     password1 = serializers.CharField(write_only=True)
     password2 = serializers.CharField(write_only=True)
+    name = serializers.CharField(write_only=True)
+    age = serializers.IntegerField(write_only=True)
+    state = serializers.CharField(write_only=True)
+    favorite_subject = serializers.CharField(write_only=True)
+    favorite_hobby = serializers.CharField(write_only=True)
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'password1', 'password2']
+        fields = [
+            'username', 'email', 'password1', 'password2',
+            'name', 'age', 'state', 'favorite_subject', 'favorite_hobby'
+        ]
 
     def validate(self, data):
         if data['password1'] != data['password2']:
@@ -38,5 +46,13 @@ class RegisterSerializer(serializers.ModelSerializer):
             username=validated_data['username'],
             email=validated_data['email'],
             password=validated_data['password1']
+        )
+        UserProfile.objects.create(
+            user=user,
+            name=validated_data['name'],
+            age=validated_data['age'],
+            state=validated_data['state'],
+            favorite_subject=validated_data['favorite_subject'],
+            favorite_hobby=validated_data['favorite_hobby']
         )
         return user
