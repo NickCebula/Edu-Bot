@@ -8,6 +8,8 @@ import Profile from "./pages/Profile";
 import Evaluations from "./pages/Evaluations";
 import Reading from "./pages/Reading";
 import Spelling from "./pages/Spelling";
+import ParentView from "./pages/ParentView";
+import LandingPage from "./pages/LandingPage";
 
 export default function App() {
   return (
@@ -22,7 +24,9 @@ export default function App() {
         <Route path="/evaluations"     element={<Evaluations />} />
         <Route path="/reading"         element={<Reading />} />
         <Route path="/spelling"        element={<Spelling />} />
-        <Route path="*"                element={<Login />} />
+        <Route path="/ParentView"      element={<ParentView />} />
+        <Route path="LandingPage"   element={<LandingPage />} />
+        <Route path="*"                element={<LandingPage />} />
       </Routes>
     </BrowserRouter>
   );

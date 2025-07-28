@@ -44,7 +44,7 @@ export default function NavBar({ title, username, links = [], color }) {
           type="button"
         >
           <span role="img" aria-label="user" style={{ marginRight: 8 }}>👤</span>
-          {username || "Menu"}
+          {username}
           <svg style={{ marginLeft: 8 }} width="16" height="16" fill="none" viewBox="0 0 16 16">
             <path d="M4 6l4 4 4-4" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
@@ -52,6 +52,11 @@ export default function NavBar({ title, username, links = [], color }) {
         {dropdownOpen && (
           <div className="dropdown-menu">
             <ul className="dropdown-list">
+                <li>
+                <Link to="/ParentView" className="dropdown-link">
+                  Parent Access
+                </Link>
+              </li>
               <li>
                 <a href="#" className="dropdown-link">
                   Settings
@@ -63,7 +68,7 @@ export default function NavBar({ title, username, links = [], color }) {
                 </a>
               </li>
               <li>
-                <a href="#" className="dropdown-link">
+                <a href="#" className="dropdown-link" onClick={() => logout()}>
                   Sign out
                 </a>
               </li>

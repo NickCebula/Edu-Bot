@@ -15,8 +15,9 @@ export function AuthProvider({ children }) {
         setFullName(data.full_name);
         setUsername(data.user || data.full_name || "");
       } else {
-        setFullName("");
-        setUsername("");
+        console.error("Failed to fetch profile:", res.statusText);
+        setUsername("Guest");
+        setFullName("Guest User");
       }
     };
     fetchProfile();
