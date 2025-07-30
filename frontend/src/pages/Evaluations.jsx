@@ -12,14 +12,28 @@ const navLinks = [
 
 export default function Evaluations() {
   const [logs, setLogs] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const handleGenerate = () => {
-    const now = new Date();
-    const dateTime = now.toLocaleString();
-    setLogs([
-      ...logs,
-      `${dateTime}: an evaluation was generated`
-    ]);
+  const handleGenerate = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/evaluation/generate/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: "Guest", grade: "2nd" }),
+      });
+      const data = await res.json();
+      setLogs([
+        ...logs,
+        `${new Date().toLocaleString()}: ${data.evaluation || "Failed to generate evaluation."}`
+      ]);
+    } catch (err) {
+      setLogs([
+        ...logs,
+        `${new Date().toLocaleString()}: Error generating evaluation.`
+      ]);
+    }
+    setLoading(false);
   };
 
   return (
@@ -38,8 +52,9 @@ export default function Evaluations() {
             marginBottom: "20px"
           }}
           onClick={handleGenerate}
+          disabled={loading}
         >
-          GENERATE NEW EVALUATION
+          {loading ? "GENERATING..." : "GENERATE NEW EVALUATION"}
         </button>
         <div className="evaluations">
           {logs.map((log, idx) => (
