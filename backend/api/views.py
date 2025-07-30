@@ -9,12 +9,14 @@ from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
+from rest_framework.decorators import api_view
 
 from .models import Question, ReadingPassage, MathQuestion, SpellingQuestion, UserProfile
 from .serializers import QuestionSerializer, ReadingPassageSerializer, RegisterSerializer
 from .reading import generate_reading_data, save_reading_to_db
 from .math import generate_math_data, save_math_to_db
 from .spelling import save_spelling_to_db
+from .evaluations import generate_evaluation
 
 from openai import OpenAI
 import os
@@ -181,3 +183,13 @@ def get_profile(request):
         return Response(profile_data, status=status.HTTP_200_OK)
     except UserProfile.DoesNotExist:
         return Response({"error": "Profile not found"}, status=status.HTTP_404_NOT_FOUND)
+    
+@api_view(["POST"])
+def generate_evaluation_view(request):
+    username = request.data.get("username", "Guest")
+    grade = request.data.get("grade", "2nd")
+    try:
+        evaluation = generate_evaluation(username=username, grade=grade)
+        return Response({"evaluation": evaluation})
+    except Exception as e:
+        return Response({"error": str(e)}, status=500)
