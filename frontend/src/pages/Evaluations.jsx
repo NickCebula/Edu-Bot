@@ -11,21 +11,6 @@ const navLinks = [
   { to: "/profile", label: "PROFILE" },
 ];
 
-const token = localStorage.getItem("token");
-
-async function refreshToken() {
-  const refresh = localStorage.getItem("refresh");
-  const res = await fetch("/api/token/refresh/", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ refresh }),
-  });
-  if (!res.ok) throw new Error("Refresh failed");
-  const data = await res.json();
-  localStorage.setItem("token", data.access);
-  return data.access;
-}
-
 export default function Evaluations() {
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(false);
