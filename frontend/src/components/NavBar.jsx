@@ -1,11 +1,17 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate} from "react-router-dom";
 import "../assets/NavBar.css";
+import { logout } from "@/services/auth";
 
 export default function NavBar({ title, username, links = [], color }) {
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
-
+  const navigate = useNavigate();
   const handleDropdownToggle = () => setDropdownOpen((open) => !open);
+
+  const handleLogout = async () => {
+    await logout();
+    navigate("/login", { replace: true });
+  };
 
   // Close dropdown when clicking outside
   React.useEffect(() => {
@@ -58,19 +64,15 @@ export default function NavBar({ title, username, links = [], color }) {
                 </Link>
               </li>
               <li>
-                <a href="#" className="dropdown-link">
-                  Settings
-                </a>
+                <Link to="/settings" className="dropdown-link">Settings</Link>
               </li>
               <li>
-                <a href="#" className="dropdown-link">
-                  Info
-                </a>
+                <Link to="/info" className="dropdown-link">Info</Link>
               </li>
               <li>
-                <a href="#" className="dropdown-link" onClick={() => logout()}>
+                <Link onClick={handleLogout} className="dropdown-link" type="button">
                   Sign out
-                </a>
+                </Link>
               </li>
             </ul>
           </div>

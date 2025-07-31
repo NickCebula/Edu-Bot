@@ -6,8 +6,12 @@ from django.conf import settings
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.tokens import RefreshToken
+
+
 
 from .models import Question, ReadingPassage, MathQuestion, SpellingQuestion, UserProfile
 from .serializers import QuestionSerializer, ReadingPassageSerializer, RegisterSerializer
@@ -192,3 +196,10 @@ def generate_evaluation_view(request):
         return Response({"error": "Profile not found"}, status=404)
     evaluation = generate_evaluation(profile)
     return Response({"evaluation": evaluation})
+
+@api_view(['POST'])
+def logout(request):
+    token = request.data.get('refresh')
+    if token:
+        RefreshToken(token).blacklist()
+    return Response(status=205)

@@ -22,20 +22,14 @@ const handleSubmit = async (e) => {
   if (!isFormValid) return;
   setError('');
   setLoading(true);
-  try {
-    const res = await fetch("/api/token/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username: form.username, password: form.password }),
-    });
-    if (!res.ok) throw new Error("Login failed");
-    const data = await res.json();
-    localStorage.setItem("token", data.access);
-    localStorage.setItem("refresh", data.refresh);   // refresh token
+  try{
+    await login(form.username, form.password);
     navigate('/subjects');
-  } catch (err) {
-    setError('Invalid username or password');
-  } finally {
+    }
+  catch {
+    setError('Invalid username or password. Please try again.');
+  }
+  finally {
     setLoading(false);
   }
 };
