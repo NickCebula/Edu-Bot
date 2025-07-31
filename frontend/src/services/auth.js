@@ -8,25 +8,44 @@ export function setAuthHeader(token) {
 }
 
 // perform login, returns `{ access, refresh }`
-export function login(username, password) {
-  return api.post("/token/", { username, password })
-    .then(res => {
-      const { access, refresh } = res.data;
-      localStorage.setItem("access_token", access);
-      localStorage.setItem("refresh_token", refresh);
-      setAuthHeader(access);
-      return res.data;
-    });
+export async function login(username, password) {
+  const { data } = await api.post("/token/", { username, password });
+  localStorage.setItem("access_token", data.access);
+  localStorage.setItem("refresh_token", data.refresh);
+  setAuthHeader(data.access);
+  return data;
 }
 
-// optionally add a refresh() function:
-export function refreshToken() {
-  const refresh = localStorage.getItem("refresh_token");
-  return api.post("/token/refresh/", { refresh })
-    .then(res => {
-      const { access } = res.data;
-      localStorage.setItem("access_token", access);
-      setAuthHeader(access);
-      return access;
-    });
+export function bootstrapAuth() {
+  const access = localStorage.getItem("access");
+  if (access) {
+    setAuthHeader(access);
+  }
 }
+
+export async function refreshToken() {
+  const refresh = localStorage.getItem("refresh");
+  if (!refresh) throw new Error("No refresh token available");
+  
+  const { data } = await api.post("/token/refresh/", { refresh });
+  localStorage.setItem("access", data.access);
+  setAuthHeader(data.access);
+  return data.access;
+}
+
+export async function logout() {
+  try {
+    const refresh = localStorage.getItem("refresh");
+    if(refresh) await api.post(/logout/, { refresh });
+  } finally {
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+    setAuthHeader(null);
+    delete api.defaults.headers.common["Authorization"];
+    localStorage.setItem('logout', Date.now());
+  }
+}
+
+export default api;
+
+
