@@ -3,13 +3,11 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import permission_classes
-from rest_framework.decorators import api_view
 
 from .models import Question, ReadingPassage, MathQuestion, SpellingQuestion, UserProfile
 from .serializers import QuestionSerializer, ReadingPassageSerializer, RegisterSerializer
@@ -185,11 +183,12 @@ def get_profile(request):
         return Response({"error": "Profile not found"}, status=status.HTTP_404_NOT_FOUND)
     
 @api_view(["POST"])
+@permission_classes([IsAuthenticated])
 def generate_evaluation_view(request):
-    username = request.data.get("username", "Guest")
-    grade = request.data.get("grade", "2nd")
+    user = request.user
     try:
-        evaluation = generate_evaluation(username=username, grade=grade)
-        return Response({"evaluation": evaluation})
-    except Exception as e:
-        return Response({"error": str(e)}, status=500)
+        profile = UserProfile.objects.get(user=user)
+    except UserProfile.DoesNotExist:
+        return Response({"error": "Profile not found"}, status=404)
+    evaluation = generate_evaluation(profile)
+    return Response({"evaluation": evaluation})

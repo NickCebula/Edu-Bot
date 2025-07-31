@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import NavBar from "../components/NavBar";
+import { authFetch } from "../utils/authFetch";
 import "../assets/Subjects.css";
 
 // Example navigation links
@@ -10,6 +11,21 @@ const navLinks = [
   { to: "/profile", label: "PROFILE" },
 ];
 
+const token = localStorage.getItem("token");
+
+async function refreshToken() {
+  const refresh = localStorage.getItem("refresh");
+  const res = await fetch("/api/token/refresh/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ refresh }),
+  });
+  if (!res.ok) throw new Error("Refresh failed");
+  const data = await res.json();
+  localStorage.setItem("token", data.access);
+  return data.access;
+}
+
 export default function Evaluations() {
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -17,17 +33,26 @@ export default function Evaluations() {
   const handleGenerate = async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/evaluation/generate/", {
+      const response = await authFetch("/api/evaluation/generate/", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: "Guest", grade: "2nd" }),
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
-      const data = await res.json();
-      setLogs([
-        ...logs,
-        `${new Date().toLocaleString()}: ${data.evaluation || "Failed to generate evaluation."}`
-      ]);
-    } catch (err) {
+      
+      if (response.ok) {
+        const data = await response.json();
+        setLogs([
+          ...logs,
+          `${new Date().toLocaleString()}: ${data.evaluation || "Generated evaluation successfully."}`
+        ]);
+      } else {
+        setLogs([
+          ...logs,
+          `${new Date().toLocaleString()}: Failed to generate evaluation.`
+        ]);
+      }
+    } catch (error) {
       setLogs([
         ...logs,
         `${new Date().toLocaleString()}: Error generating evaluation.`

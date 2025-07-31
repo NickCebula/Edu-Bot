@@ -4,12 +4,11 @@ import json
 
 client = OpenAI(api_key=settings.OPENAI_API_KEY)
 
-def generate_evaluation(username="Guest", grade="2nd"):
-    """
-    Generate an AI-powered evaluation summary for a student.
-    """
+def generate_evaluation(profile):
     prompt = (
-        f"Write a short, encouraging evaluation summary for a {grade} grade student named {username}. "
+        f"Write a short, encouraging evaluation summary for {profile.name}, "
+        f"a {profile.age}-year-old student from {profile.state}. "
+        f"Their favorite subject is {profile.favorite_subject} and their favorite hobby is {profile.favorite_hobby}. "
         "Focus on their progress in reading, math, and spelling. "
         "Highlight strengths and suggest one area for improvement. "
         "Keep it friendly, positive, and under 100 words. "

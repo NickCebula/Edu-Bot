@@ -17,20 +17,28 @@ export default function Login() {
   // simple front‑end required fields guard
   const isFormValid = form.username.trim() && form.password.trim();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!isFormValid) return;
-    setError('');
-    setLoading(true);
-    try {
-      await login(form.username, form.password); //should set httpOnly cookie / local storage
-      navigate('/subjects');
-    } catch (err) {
-      setError('Invalid username or password');
-    } finally {
-      setLoading(false);
-    }
-  };
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  if (!isFormValid) return;
+  setError('');
+  setLoading(true);
+  try {
+    const res = await fetch("/api/token/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: form.username, password: form.password }),
+    });
+    if (!res.ok) throw new Error("Login failed");
+    const data = await res.json();
+    localStorage.setItem("token", data.access);
+    localStorage.setItem("refresh", data.refresh);   // refresh token
+    navigate('/subjects');
+  } catch (err) {
+    setError('Invalid username or password');
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="flex min-h-screen flex-col justify-center px-6 py-12 bg-gradient-to-br from-indigo-50 via-white to-purple-50">

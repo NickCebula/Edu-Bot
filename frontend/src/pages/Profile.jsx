@@ -1,46 +1,29 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import NavBar from "../components/NavBar";
+import { authFetch } from "../utils/authFetch";
 
 export default function Profile() {
   const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
 
   useEffect(() => {
-// Try to refresh token if expired
-const token = localStorage.getItem("access_token");
-fetch("http://localhost:8000/api/profile/", {
-  credentials: "include",
-  headers: { "Authorization": `Bearer ${token}` }
-})
-  .then(res => {
-    if (res.status === 401) {
-      // Token expired, try to refresh
-      const refresh = localStorage.getItem("refresh_token");
-      return fetch("http://localhost:8000/api/token/refresh/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ refresh })
-      })
-        .then(r => r.json())
-        .then(data => {
-          if (data.access) {
-            localStorage.setItem("access_token", data.access);
-            // Retry profile fetch with new token
-            return fetch("http://localhost:8000/api/profile/", {
-              credentials: "include",
-              headers: { "Authorization": `Bearer ${data.access}` }
-            }).then(r => r.json());
-          } else {
-            // Refresh failed, redirect to login
-            window.location.href = "/login";
-          }
-        });
-    }
-    return res.json();
-  })
-  .then(data => setProfile(data))
-  .catch(() => setProfile(null));
+    const fetchProfile = async () => {
+      try {
+        const response = await authFetch("/api/profile/");
+        if (response.ok) {
+          const data = await response.json();
+          setProfile(data);
+        } else {
+          setProfile(null);
+        }
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+        setProfile(null);
+      }
+    };
+
+    fetchProfile();
   }, []);
 
   if (!profile) {
