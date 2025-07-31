@@ -3,18 +3,18 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import permission_classes
 
 from .models import Question, ReadingPassage, MathQuestion, SpellingQuestion, UserProfile
 from .serializers import QuestionSerializer, ReadingPassageSerializer, RegisterSerializer
 from .reading import generate_reading_data, save_reading_to_db
 from .math import generate_math_data, save_math_to_db
 from .spelling import save_spelling_to_db
+from .evaluations import generate_evaluation
 
 from openai import OpenAI
 import os
@@ -181,3 +181,14 @@ def get_profile(request):
         return Response(profile_data, status=status.HTTP_200_OK)
     except UserProfile.DoesNotExist:
         return Response({"error": "Profile not found"}, status=status.HTTP_404_NOT_FOUND)
+    
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def generate_evaluation_view(request):
+    user = request.user
+    try:
+        profile = UserProfile.objects.get(user=user)
+    except UserProfile.DoesNotExist:
+        return Response({"error": "Profile not found"}, status=404)
+    evaluation = generate_evaluation(profile)
+    return Response({"evaluation": evaluation})

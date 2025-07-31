@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import NavBar from "../components/NavBar";
+import { authFetch } from "../utils/authFetch";
 import "../assets/Subjects.css";
 
 // Example navigation links
@@ -12,14 +13,37 @@ const navLinks = [
 
 export default function Evaluations() {
   const [logs, setLogs] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const handleGenerate = () => {
-    const now = new Date();
-    const dateTime = now.toLocaleString();
-    setLogs([
-      ...logs,
-      `${dateTime}: an evaluation was generated`
-    ]);
+  const handleGenerate = async () => {
+    setLoading(true);
+    try {
+      const response = await authFetch("/api/evaluation/generate/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        setLogs([
+          ...logs,
+          `${new Date().toLocaleString()}: ${data.evaluation || "Generated evaluation successfully."}`
+        ]);
+      } else {
+        setLogs([
+          ...logs,
+          `${new Date().toLocaleString()}: Failed to generate evaluation.`
+        ]);
+      }
+    } catch (error) {
+      setLogs([
+        ...logs,
+        `${new Date().toLocaleString()}: Error generating evaluation.`
+      ]);
+    }
+    setLoading(false);
   };
 
   return (
@@ -38,8 +62,9 @@ export default function Evaluations() {
             marginBottom: "20px"
           }}
           onClick={handleGenerate}
+          disabled={loading}
         >
-          GENERATE NEW EVALUATION
+          {loading ? "GENERATING..." : "GENERATE NEW EVALUATION"}
         </button>
         <div className="evaluations">
           {logs.map((log, idx) => (
