@@ -11,6 +11,8 @@ function Spelling({ username = "Guest" }) {
   const [complete, setComplete] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [step, setStep] = useState('pronounce'); // 'pronounce' or 'spell'
+  const [imageLoading, setImageLoading] = useState(true);
+  const [imageError, setImageError] = useState(false);
   const recognitionRef = useRef(null);
 
   const navigate = useNavigate();
@@ -21,6 +23,12 @@ function Spelling({ username = "Guest" }) {
       .then((data) => setQuestions(data))
       .catch((err) => console.error('Failed to load questions:', err));
   }, []);
+
+  // Reset image loading state when question changes
+  useEffect(() => {
+    setImageLoading(true);
+    setImageError(false);
+  }, [currentIndex]);
 
   // Speech recognition setup
   useEffect(() => {
@@ -98,6 +106,15 @@ function Spelling({ username = "Guest" }) {
     }
   };
 
+  const handleImageLoad = () => {
+    setImageLoading(false);
+  };
+
+  const handleImageError = () => {
+    setImageLoading(false);
+    setImageError(true);
+  };
+
   if (complete) {
     return (
       <>
@@ -124,35 +141,145 @@ function Spelling({ username = "Guest" }) {
   return (
     <>
       <NavBar title="Edu-Bot Spelling" username={username} color="blue" />
-      <div style={{ maxWidth: '700px', margin: 'auto', padding: '20px' }}>
-        <h2>📝 Spelling Quiz</h2>
+      <div style={{ 
+        maxWidth: '800px', 
+        margin: 'auto', 
+        padding: '30px 20px',
+        backgroundColor: '#fff',
+        minHeight: '100vh'
+      }}>
+        <h2 style={{ 
+          textAlign: 'center', 
+          marginBottom: '30px',
+          color: '#2c3e50',
+          fontSize: '2.2em',
+          fontWeight: 'bold'
+        }}>
+          📝 Spelling Quiz
+        </h2>
 
         {/* Progress Bar */}
-        <div style={{ height: '20px', backgroundColor: '#e0e0e0', borderRadius: '10px', marginBottom: '20px' }}>
+        <div style={{ 
+          height: '12px', 
+          backgroundColor: '#e9ecef', 
+          borderRadius: '6px', 
+          marginBottom: '30px',
+          overflow: 'hidden'
+        }}>
           <div
             style={{
               width: `${((currentIndex + 1) / questions.length) * 100}%`,
               height: '100%',
-              backgroundColor: '#4caf50',
-              borderRadius: '10px',
+              backgroundColor: '#28a745',
+              borderRadius: '6px',
               transition: 'width 0.3s ease',
             }}
           ></div>
         </div>
 
+
+
         {/* Image and Audio */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '20px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '30px' }}>
           {q.image_url && (
-            <img src={q.image_url} alt="Spelling" style={{ width: 180, height: 180, objectFit: 'contain', marginBottom: '10px' }} />
+            <div style={{ 
+              position: 'relative', 
+              width: 200, 
+              height: 200, 
+              marginBottom: '20px',
+              borderRadius: '12px',
+              overflow: 'hidden',
+              boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+              backgroundColor: '#fff'
+            }}>
+              {imageLoading && (
+                <div style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  backgroundColor: '#f8f9fa',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: '12px',
+                  fontSize: '14px',
+                  color: '#6c757d'
+                }}>
+                  <div>Loading image...</div>
+                </div>
+              )}
+              {imageError && (
+                <div style={{
+                  width: '100%',
+                  height: '100%',
+                  backgroundColor: '#f8f9fa',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: '12px',
+                  border: '2px dashed #dee2e6',
+                  fontSize: '14px',
+                  color: '#6c757d'
+                }}>
+                  <div>Image not available</div>
+                </div>
+              )}
+              <img 
+                src={q.image_url} 
+                alt={`Spelling word: ${q.word}`}
+                style={{ 
+                  width: '100%', 
+                  height: '100%', 
+                  objectFit: 'contain',
+                  borderRadius: '12px',
+                  display: imageLoading || imageError ? 'none' : 'block'
+                }}
+                onLoad={handleImageLoad}
+                onError={handleImageError}
+              />
+            </div>
           )}
           {q.audio_url && (
-            <button onClick={playAudio} style={{ marginBottom: '10px', fontSize: '1.2em' }}>🔊 Play Word</button>
+            <button 
+              onClick={playAudio} 
+              style={{ 
+                marginBottom: '15px', 
+                fontSize: '1.1em',
+                padding: '12px 24px',
+                backgroundColor: '#007bff',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                transition: 'background-color 0.2s ease',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+              }}
+              onMouseEnter={(e) => e.target.style.backgroundColor = '#0056b3'}
+              onMouseLeave={(e) => e.target.style.backgroundColor = '#007bff'}
+            >
+              🔊 Play Word
+            </button>
           )}
         </div>
 
         {/* Step Instructions */}
-        <div style={{ marginBottom: '15px', fontWeight: 'bold' }}>
-          {step === 'pronounce' ? 'Step 1: Pronounce the word using the microphone.' : 'Step 2: Spell the word using the keypad.'}
+        <div style={{ 
+          marginBottom: '25px', 
+          textAlign: 'center',
+          padding: '15px',
+          backgroundColor: step === 'pronounce' ? '#e3f2fd' : '#fff3cd',
+          borderRadius: '8px',
+          border: `2px solid ${step === 'pronounce' ? '#2196f3' : '#ffc107'}`
+        }}>
+          <div style={{ 
+            fontWeight: 'bold', 
+            fontSize: '1.1em',
+            color: step === 'pronounce' ? '#1976d2' : '#856404'
+          }}>
+            {step === 'pronounce' ? '🎤 Step 1: Pronounce the word using the microphone' : '⌨️ Step 2: Spell the word using the keypad'}
+          </div>
         </div>
 
         {/* Pronounce Step */}
@@ -269,13 +396,45 @@ function Spelling({ username = "Guest" }) {
         )}
 
         {/* Feedback */}
-        {feedback && <p style={{ marginTop: '10px', fontWeight: 'bold' }}>{feedback}</p>}
+        {feedback && (
+          <div style={{ 
+            marginTop: '20px', 
+            padding: '15px',
+            borderRadius: '8px',
+            textAlign: 'center',
+            fontWeight: 'bold',
+            fontSize: '1.1em',
+            backgroundColor: feedback.includes('✅') ? '#d4edda' : '#f8d7da',
+            color: feedback.includes('✅') ? '#155724' : '#721c24',
+            border: `2px solid ${feedback.includes('✅') ? '#c3e6cb' : '#f5c6cb'}`
+          }}>
+            {feedback}
+          </div>
+        )}
 
         {/* Next Button */}
         {selected && (
-          <button onClick={handleNext} style={{ marginTop: '20px' }}>
-            {currentIndex === questions.length - 1 ? 'Finish Quiz' : 'Next Question'}
-          </button>
+          <div style={{ textAlign: 'center', marginTop: '30px' }}>
+            <button 
+              onClick={handleNext} 
+              style={{ 
+                padding: '15px 30px',
+                fontSize: '1.2em',
+                backgroundColor: '#28a745',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontWeight: 'bold',
+                transition: 'background-color 0.2s ease',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+              }}
+              onMouseEnter={(e) => e.target.style.backgroundColor = '#218838'}
+              onMouseLeave={(e) => e.target.style.backgroundColor = '#28a745'}
+            >
+              {currentIndex === questions.length - 1 ? '🎉 Finish Quiz' : '➡️ Next Question'}
+            </button>
+          </div>
         )}
       </div>
     </>

@@ -126,23 +126,52 @@ def math_quiz(request):
 
 @api_view(["POST"])
 def generate_spelling_question(request):
-    saved = save_spelling_to_db()
-    if not saved:
-        return Response({"error": "Failed to generate"}, status=500)
-    return Response({"message": "Saved", "id": saved.id})
+    try:
+        saved = save_spelling_to_db()
+        if not saved:
+            return Response({"error": "Failed to generate"}, status=500)
+        
+        # Check if image was uploaded to S3
+        image_storage = "S3" if saved.image_url and "s3.amazonaws.com" in saved.image_url else "Fallback"
+        
+        return Response({
+            "message": "Saved", 
+            "id": saved.id,
+            "word": saved.word,
+            "image_url": saved.image_url,
+            "audio_url": saved.audio_url,
+            "image_storage": image_storage
+        })
+    except Exception as e:
+        return Response({"error": f"Generation failed: {str(e)}"}, status=500)
 
 @api_view(["GET"])
 def spelling_quiz(request):
     questions = SpellingQuestion.objects.order_by('?')[:5]
-    out = [
-        {
+    out = []
+    
+    for q in questions:
+        # Make URLs absolute if they're relative
+        image_url = q.image_url
+        audio_url = q.audio_url
+        
+        # Convert relative media URLs to absolute URLs
+        if image_url and image_url.startswith('/media/'):
+            image_url = f"http://localhost:8000{image_url}"
+        
+        if audio_url and audio_url.startswith('/media/'):
+            audio_url = f"http://localhost:8000{audio_url}"
+        elif audio_url and 's3.amazonaws.com' in audio_url:
+            # S3 audio URLs are already absolute, no conversion needed
+            pass
+        
+        out.append({
             "id": q.id,
             "word": q.word,
-            "image_url": q.image_url,
-            "audio_url": q.audio_url,
-        }
-        for q in questions
-    ]
+            "image_url": image_url,
+            "audio_url": audio_url,
+        })
+    
     return Response(out)
 
 @api_view(["POST"])
