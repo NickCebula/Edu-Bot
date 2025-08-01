@@ -9,6 +9,7 @@ class UserProfile(models.Model):
     favorite_subject = models.CharField(max_length=100)
     favorite_hobby = models.CharField(max_length=100)
     math_questions_answered = models.PositiveIntegerField(default=0)
+    reading_questions_answered = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return f"{self.user.username}'s profile"

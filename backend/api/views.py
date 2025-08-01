@@ -95,11 +95,25 @@ from rest_framework.response import Response
 from .models import Question
 from .serializers import QuestionSerializer
 
-@api_view(["GET"])
+@api_view(["GET", "POST"])
 def reading_quiz(request):
-    questions = Question.objects.filter(subject="Reading").order_by('?')[:5]
-    serializer = QuestionSerializer(questions, many=True)
-    return Response(serializer.data)
+    if request.method == "GET":
+        questions = Question.objects.filter(subject="Reading").order_by('?')[:5]
+        serializer = QuestionSerializer(questions, many=True)
+        return Response(serializer.data)
+    
+    elif request.method == "POST":
+        username = request.data.get('username')
+        if username:
+            try:
+                user = User.objects.get(username=username)
+                profile, created = UserProfile.objects.get_or_create(user=user)
+                profile.reading_questions_answered += 1
+                profile.save()
+                return Response({"message": "Question count updated", "total": profile.reading_questions_answered})
+            except User.DoesNotExist:
+                return Response({"error": "User not found"}, status=404)
+        return Response({"error": "Username required"}, status=400)
 
 @api_view(["POST"])
 def generate_math_question(request):
