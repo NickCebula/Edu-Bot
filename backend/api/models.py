@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from django.contrib.auth.hashers import make_password, check_password
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     name = models.CharField(max_length=100)
@@ -8,6 +8,14 @@ class UserProfile(models.Model):
     state = models.CharField(max_length=100)
     favorite_subject = models.CharField(max_length=100)
     favorite_hobby = models.CharField(max_length=100)
+    pin_hash = models.CharField(max_length=128, blank=True)
+    
+    def set_pin_hash(self, pin: str):
+        self.pin_hash = make_password(pin)
+        self.save(update_fields=['pin_hash'])
+
+    def check_pin(self, pin: str) -> bool:
+        return check_password(pin, self.pin_hash)
 
     def __str__(self):
         return f"{self.user.username}'s profile"
@@ -52,3 +60,4 @@ class SpellingQuestion(models.Model):
 
     def __str__(self):
         return self.word
+

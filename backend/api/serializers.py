@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import ReadingPassage, Question, UserProfile
 from django.contrib.auth.models import User
 
+
 class QuestionSerializer(serializers.ModelSerializer):
     passage = serializers.SerializerMethodField()
 
@@ -56,3 +57,17 @@ class RegisterSerializer(serializers.ModelSerializer):
             favorite_hobby=validated_data['favorite_hobby']
         )
         return user
+
+class ParentPinSerializer(serializers.Serializer):
+    pin = serializers.RegexField(regex=r'^\d{4}$', max_length=4)
+
+    def validate_pin(self, value):
+        if not value.isdigit() or len(value) != 4:
+            raise serializers.ValidationError("PIN must be exactly 4 digits.")
+        return value
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+        user.profile.set_pin_hash(validated_data['pin'])
+        return user
+            

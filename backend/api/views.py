@@ -11,10 +11,8 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 
-
-
 from .models import Question, ReadingPassage, MathQuestion, SpellingQuestion, UserProfile
-from .serializers import QuestionSerializer, ReadingPassageSerializer, RegisterSerializer
+from .serializers import QuestionSerializer, ReadingPassageSerializer, RegisterSerializer, ParentPinSerializer
 from .reading import generate_reading_data, save_reading_to_db
 from .math import generate_math_data, save_math_to_db
 from .spelling import save_spelling_to_db
@@ -203,3 +201,26 @@ def logout(request):
     if token:
         RefreshToken(token).blacklist()
     return Response(status=205)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def parent_pin(request):
+    serializer = ParentPinSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    pin = serializer.validated_data['pin']
+
+    profile = UserProfile.objects.get(user=request.user)
+    if profile.check_pin(pin):
+        if not profile.check_pin(pin):
+            return Response({"detail": "Invalid PIN"}, status=status.HTTP_400_BAD_REQUEST)
+
+    else:
+        profile.set_pin(pin)
+        return Response({"detail": "PIN set successfully"}, status=status.HTTP_201_CREATED)
+
+    return Response({"detail": "PIN verified"}, status=status.HTTP_200_OK)
+
+
+
+
+

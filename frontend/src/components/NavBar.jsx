@@ -2,11 +2,14 @@ import React from "react";
 import { Link, useNavigate} from "react-router-dom";
 import "../assets/NavBar.css";
 import { logout } from "@/services/auth";
+import { useParent } from "../contexts/ParentContext";
+
 
 export default function NavBar({ title, username, links = [], color }) {
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
   const navigate = useNavigate();
   const handleDropdownToggle = () => setDropdownOpen((open) => !open);
+  const { parentMode } = useParent();
 
   const handleLogout = async () => {
     await logout();
@@ -60,7 +63,7 @@ export default function NavBar({ title, username, links = [], color }) {
             <ul className="dropdown-list">
                 <li>
                 <Link to="/ParentView" className="dropdown-link">
-                  Parent Access
+                  {parentMode ? "Parent Dashboard" : "Parent Mode"}
                 </Link>
               </li>
               <li>
