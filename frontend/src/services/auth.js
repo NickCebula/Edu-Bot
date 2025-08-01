@@ -36,7 +36,7 @@ export async function refreshToken() {
 export async function logout() {
   try {
     const refresh = localStorage.getItem("refresh");
-    if(refresh) await api.post(/logout/, { refresh });
+    if(refresh) await api.post("/logout/", { refresh });
   } finally {
     localStorage.removeItem("access_token");
     localStorage.removeItem("refresh_token");

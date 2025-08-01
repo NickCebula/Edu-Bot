@@ -5,7 +5,8 @@ from django.conf.urls.static import static
 from .views import (
     next_question, reading_passage, generate_reading_question, get_reading, latest_reading,
     reading_quiz, generate_math_question, math_quiz,
-    generate_spelling_question, spelling_quiz, register_user, get_profile, generate_evaluation_view
+    generate_spelling_question, spelling_quiz, register_user, get_profile, generate_evaluation_view,
+    logout
 )
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
@@ -16,6 +17,7 @@ urlpatterns = [
 urlpatterns += [
     path("token/",   TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    path("logout/", logout, name="logout"),
     path('generate-reading/', generate_reading_question, name='generate-reading'),
     path('reading/', get_reading, name='get-reading'),
     path('api/generate-question/', generate_reading_question, name='generate-question'),
