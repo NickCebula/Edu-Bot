@@ -16,6 +16,7 @@ const navLinks = [
 export default function Evaluations() {
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(false);
+  const username = localStorage.getItem('username') || 'Guest';
 
   const handleGenerate = async () => {
     setLoading(true);
@@ -62,8 +63,8 @@ export default function Evaluations() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
-      <NavBar title="Edu-Bot" links={navLinks} username="Guest" />
-      
+      <NavBar title="Edu-Bot" links={navLinks} username={username} />
+
       <PageLayout>
         <PageLayout.Header
           title="Evaluations"

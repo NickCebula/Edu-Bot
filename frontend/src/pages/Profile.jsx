@@ -7,6 +7,7 @@ export default function Profile() {
   const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const username = localStorage.getItem('username') || 'Guest';
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -34,7 +35,7 @@ export default function Profile() {
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
         <NavBar
           title="Edu-Bot"
-          username="Guest"
+          username={username}
           links={[
             { to: "/subjects", label: "SUBJECTS" },
             { to: "/evaluations", label: "EVALUATIONS" },
@@ -56,7 +57,7 @@ export default function Profile() {
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
         <NavBar
           title="Edu-Bot"
-          username="Guest"
+          username={username}
           links={[
             { to: "/subjects", label: "SUBJECTS" },
             { to: "/evaluations", label: "EVALUATIONS" },
