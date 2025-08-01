@@ -12,6 +12,7 @@ export async function login(username, password) {
   const { data } = await api.post("/token/", { username, password });
   localStorage.setItem("access_token", data.access);
   localStorage.setItem("refresh_token", data.refresh);
+  localStorage.setItem("username", username);
   setAuthHeader(data.access);
   return data;
 }
@@ -40,9 +41,10 @@ export async function logout() {
   } finally {
     localStorage.removeItem("access_token");
     localStorage.removeItem("refresh_token");
+    localStorage.removeItem("username");
     setAuthHeader(null);
     delete api.defaults.headers.common["Authorization"];
-    localStorage.setItem('logout', Date.now());
+    localStorage.setItem("logout", Date.now());
   }
 }
 

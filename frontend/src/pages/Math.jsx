@@ -16,6 +16,8 @@ function Math() {
 
   const navigate = useNavigate();
 
+  const username = localStorage.getItem('username') || 'Guest';
+
   useEffect(() => {
     fetch('/api/math/quiz/')
       .then((res) => res.json())
@@ -90,7 +92,7 @@ function Math() {
   if (complete) {
     return (
       <>
-        <NavBar title="Edu-Bot Math" username="Guest" color="red" />
+        <NavBar title="Edu-Bot Math" username={username} color="red" />
         <div style={{ textAlign: 'center', marginTop: '40px' }}>
           <h2>🎉 Great job! You completed the math quiz.</h2>
           <button onClick={() => navigate('/subjects')}>Return to Subjects</button>
@@ -102,7 +104,7 @@ function Math() {
   if (questions.length === 0) {
     return (
       <>
-        <NavBar title="Edu-Bot Math" username="Guest" color="red" />
+        <NavBar title="Edu-Bot Math" username={username} color="red" />
         <p>Loading questions...</p>
       </>
     );
@@ -112,7 +114,7 @@ function Math() {
 
   return (
     <>
-    <NavBar title="Edu-Bot Math" username="Guest" color="red" />
+    <NavBar title="Edu-Bot Math" username={username} color="red" />
     <div className="math-container">
       <h2>🧮 Math Quiz</h2>
 
