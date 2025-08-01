@@ -16,6 +16,8 @@ function Math() {
 
   const navigate = useNavigate();
 
+  const username = localStorage.getItem('username') || 'Guest';
+
   useEffect(() => {
     fetch('/api/math/quiz/')
       .then((res) => res.json())
@@ -63,7 +65,18 @@ function Math() {
     const map = { zero:"0",one:"1",two:"2",three:"3",four:"4",five:"5",six:"6",seven:"7",eight:"8",nine:"9" };
     if (map[ua]) ua = map[ua];
     setFeedback(correctAnswers.includes(ua) ? '✅ Correct!' : `❌ Correct: ${questions[currentIndex].a[1]}`);
+    
+    // Track the answered question
+    fetch('/api/math/quiz/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ username })
+    })
+    .catch((err) => console.error('Failed to update question count:', err));
   };
+
 
   const handleNext = () => {
     if (currentIndex === questions.length - 1) {
@@ -79,7 +92,7 @@ function Math() {
   if (complete) {
     return (
       <>
-        <NavBar title="Edu-Bot Math" username="Guest" color="red" />
+        <NavBar title="Edu-Bot Math" username={username} color="red" />
         <div style={{ textAlign: 'center', marginTop: '40px' }}>
           <h2>🎉 Great job! You completed the math quiz.</h2>
           <button onClick={() => navigate('/subjects')}>Return to Subjects</button>
@@ -91,7 +104,7 @@ function Math() {
   if (questions.length === 0) {
     return (
       <>
-        <NavBar title="Edu-Bot Math" username="Guest" color="red" />
+        <NavBar title="Edu-Bot Math" username={username} color="red" />
         <p>Loading questions...</p>
       </>
     );
@@ -101,7 +114,7 @@ function Math() {
 
   return (
     <>
-    <NavBar title="Edu-Bot Math" username="Guest" color="red" />
+    <NavBar title="Edu-Bot Math" username={username} color="red" />
     <div className="math-container">
       <h2>🧮 Math Quiz</h2>
 

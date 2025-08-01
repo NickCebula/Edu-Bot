@@ -9,7 +9,7 @@ def generate_evaluation(profile):
         f"Write a short, encouraging evaluation summary for {profile.name}, "
         f"a {profile.age}-year-old student from {profile.state}. "
         f"Their favorite subject is {profile.favorite_subject} and their favorite hobby is {profile.favorite_hobby}. "
-        "Focus on their progress in reading, math, and spelling. "
+        f"They have answered {profile.math_questions_answered} math questions so far. Use this number explicitly. "
         "Highlight strengths and suggest one area for improvement. "
         "Keep it friendly, positive, and under 100 words. "
         "Return ONLY the evaluation text, no extra formatting or explanation."
