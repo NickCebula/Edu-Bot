@@ -13,6 +13,8 @@ function Reading() {
 
   const navigate = useNavigate();
 
+  const username = localStorage.getItem('username') || 'Guest';
+
   useEffect(() => {
     fetch('http://localhost:8000/api/reading/quiz/')
       .then((res) => res.json())
@@ -30,6 +32,16 @@ function Reading() {
     setSubmitted(true);
     const correct = questions[currentIndex].correct_answer;
     setFeedback(selected === correct ? '✅ Correct!' : `❌ Correct: ${correct}`);
+    
+    // Track the answered question
+    fetch('/api/reading/quiz/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ username })
+    })
+    .catch((err) => console.error('Failed to update question count:', err));
   };
 
   const handleNext = () => {
@@ -47,7 +59,7 @@ function Reading() {
   if (complete) {
     return (
       <>
-        <NavBar title="Edu-Bot Reading" username="Guest" color="lightgreen" />
+        <NavBar title="Edu-Bot Reading" username={username} color="lightgreen" />
         <div style={{ textAlign: 'center', marginTop: '40px' }}>
           <h2>🎉 Great job! You completed the quiz.</h2>
           <button onClick={() => navigate('/subjects')}>Return to Subjects</button>
@@ -59,7 +71,7 @@ function Reading() {
   if (questions.length === 0) {
     return (
       <>
-        <NavBar title="Edu-Bot Reading" username="Guest" color="lightgreen" />
+        <NavBar title="Edu-Bot Reading" username={username} color="lightgreen" />
         <p>Loading questions...</p>
       </>
     );
@@ -69,7 +81,7 @@ function Reading() {
 
   return (
     <>
-      <NavBar title="Edu-Bot Reading" username="Guest" color="lightgreen" />
+      <NavBar title="Edu-Bot Reading" username={username} color="lightgreen" />
       <div style={{ maxWidth: '700px', margin: 'auto', padding: '20px' }}>
         <h2>📚 Reading Quiz</h2>
 

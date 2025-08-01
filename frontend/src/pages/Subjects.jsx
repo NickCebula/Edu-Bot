@@ -17,8 +17,9 @@ const subjects = [
   { id: 'test',     title: 'Test',     icon: ClipboardList, bg: 'bg-blue-500' },
 ];
 
-export default function Subjects({ username = 'Guest' }) {
+export default function Subjects() {
   const nav = useNavigate();
+  const username = localStorage.getItem('username') || 'Guest';
 
   return (
     <>
