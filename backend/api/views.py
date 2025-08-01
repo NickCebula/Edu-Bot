@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
+from django.contrib.auth.models import User
 
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -10,8 +11,6 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
-
-
 
 from .models import Question, ReadingPassage, MathQuestion, SpellingQuestion, UserProfile
 from .serializers import QuestionSerializer, ReadingPassageSerializer, RegisterSerializer
@@ -110,19 +109,33 @@ def generate_math_question(request):
     saved = save_math_to_db(data)
     return Response({"message": "Saved", "id": saved.id})
 
-@api_view(["GET"])
+@api_view(["GET", "POST"])
 def math_quiz(request):
-    questions = MathQuestion.objects.order_by('?')[:5]
+    if request.method == "GET":
+        questions = MathQuestion.objects.order_by('?')[:5]
     # Return both text and numeric answers as a list for each question
-    out = [
-        {
-            "id": q.id,
-            "q": q.question,
-            "a": [q.answer_text, q.answer_num]
-        }
-        for q in questions
-    ]
-    return Response(out)
+        out = [
+            {
+                "id": q.id,
+                "q": q.question,
+                "a": [q.answer_text, q.answer_num]
+            }
+            for q in questions
+        ]
+        return Response(out)
+    
+    elif request.method == "POST":
+        username = request.data.get('username')
+        if username:
+            try:
+                user = User.objects.get(username=username)
+                profile, created = UserProfile.objects.get_or_create(user=user)
+                profile.math_questions_answered += 1
+                profile.save()
+                return Response({"message": "Question count updated", "total": profile.math_questions_answered})
+            except User.DoesNotExist:
+                return Response({"error": "User not found"}, status=404)
+        return Response({"error": "Username required"}, status=400)
 
 @api_view(["POST"])
 def generate_spelling_question(request):
