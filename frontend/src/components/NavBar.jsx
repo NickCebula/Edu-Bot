@@ -4,8 +4,10 @@ import { logout } from "@/services/auth";
 
 export default function NavBar({ title, username, links = [], color }) {
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
   const navigate = useNavigate();
   const handleDropdownToggle = () => setDropdownOpen((open) => !open);
+  const handleMobileMenuToggle = () => setMobileMenuOpen((open) => !open);
 
   const handleLogout = async () => {
     await logout();
@@ -16,10 +18,11 @@ export default function NavBar({ title, username, links = [], color }) {
   React.useEffect(() => {
     const handleClick = (e) => {
       if (!e.target.closest(".dropdown-container")) setDropdownOpen(false);
+      if (!e.target.closest(".mobile-menu-container")) setMobileMenuOpen(false);
     };
-    if (dropdownOpen) document.addEventListener("mousedown", handleClick);
+    if (dropdownOpen || mobileMenuOpen) document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
-  }, [dropdownOpen]);
+  }, [dropdownOpen, mobileMenuOpen]);
 
   // Color variants for different subjects
   const getColorClasses = () => {
@@ -179,21 +182,26 @@ export default function NavBar({ title, username, links = [], color }) {
           </div>
 
           {/* Mobile menu button */}
-          <div className="md:hidden">
+          <div className="md:hidden mobile-menu-container">
             <button
-              onClick={() => setDropdownOpen(!dropdownOpen)}
+              onClick={handleMobileMenuToggle}
               className="text-white hover:text-white/80 p-2"
               aria-label="Open menu"
+              aria-expanded={mobileMenuOpen}
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                {mobileMenuOpen ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                )}
               </svg>
             </button>
           </div>
         </div>
 
         {/* Mobile Navigation Links */}
-        {dropdownOpen && (
+        {mobileMenuOpen && (
           <div className="md:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1 border-t border-white/20">
               {links.map(({ to, label }, i) => (
@@ -201,7 +209,7 @@ export default function NavBar({ title, username, links = [], color }) {
                   key={i}
                   to={to}
                   className="text-white/90 hover:text-white hover:bg-white/10 block px-3 py-2 rounded-md text-base font-medium transition-colors"
-                  onClick={() => setDropdownOpen(false)}
+                  onClick={() => setMobileMenuOpen(false)}
                 >
                   {label}
                 </Link>
